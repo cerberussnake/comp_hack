@@ -72,6 +72,12 @@ SET(${PROJECT_NAME}_SRCS
     #src/MiZoneDataScript.cpp
 )
 
+IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/ConfigCustom.cpp)
+    SET(${PROJECT_NAME}_SRCS ${${PROJECT_NAME}_SRCS} src/ConfigCustom.cpp)
+ELSE()
+    SET(${PROJECT_NAME}_SRCS ${${PROJECT_NAME}_SRCS} src/Config.cpp)
+ENDIF()
+
 # This is a list of all header files. Adding the header files here ensures they
 # are listed in the source files for IDE projects.
 SET(${PROJECT_NAME}_HDRS
