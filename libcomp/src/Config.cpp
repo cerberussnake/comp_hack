@@ -26,6 +26,12 @@
 
 #include "Config.h"
 
+namespace libcomp
+{
+
+namespace Config
+{
+
 /// 4-byte magic at the beginning of an encrypted file.
 const char *ENCRYPTED_FILE_MAGIC = "CHED"; // COMP_hack Encrypted Data
 
@@ -34,3 +40,7 @@ const char *ENCRYPTED_FILE_KEY = "}]#Su?Y}q!^f*S5O";
 
 /// Blowfish initialization vector used by the file encryption.
 const char *ENCRYPTED_FILE_IV = "P[?jd6c4";
+
+} // namespace Config
+
+} // namespace libcomp
