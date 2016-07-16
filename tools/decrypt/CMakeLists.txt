@@ -15,5 +15,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ADD_SUBDIRECTORY(decrypt)
-ADD_SUBDIRECTORY(encrypt)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+PROJECT(comp_decrypt)
+
+MESSAGE("** Configuring ${PROJECT_NAME} **")
+
+INCLUDE_DIRECTORIES(${LIBCOMP_INCLUDES})
+
+SET(${PROJECT_NAME}_SRCS
+    src/decrypt.cpp
+)
+
+SET(${PROJECT_NAME}_HDRS
+)
+
+ADD_EXECUTABLE(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS} ${${PROJECT_NAME}_HDRS})
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} comp)
+
+INSTALL(TARGETS ${PROJECT_NAME} DESTINATION bin)
