@@ -44,7 +44,7 @@ ENDIF(BSD)
 
 SET(${PROJECT_NAME}_SRCS
     src/Compress.cpp
-    #src/Convert.cpp
+    src/Convert.cpp
     src/Decrypt.cpp
     #src/EngineLocker.cpp
     src/Exception.cpp
@@ -223,6 +223,7 @@ TARGET_LINK_LIBRARIES(comp ${QT_LIBRARIES} ${OPENSSL_LIBRARIES}
 # List of unit tests to add to CTest.
 SET(${PROJECT_NAME}_TEST_SRCS
     String
+    Convert
     Decrypt
     #XmlUtils
 )
