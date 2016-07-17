@@ -322,6 +322,48 @@ TEST(String, Split)
     EXPECT_EQ("", list.front()); list.pop_front();
 }
 
+TEST(String, FromCodePoint)
+{
+    // 1 byte.
+    EXPECT_EQ("@", String::FromCodePoint(0x40));
+    EXPECT_EQ(1, String::FromCodePoint(0x40).Size());
+    EXPECT_EQ("a", String::FromCodePoint(0x61));
+    EXPECT_EQ(1, String::FromCodePoint(0x61).Size());
+
+    // 2 bytes.
+    EXPECT_EQ("µ", String::FromCodePoint(0xB5));
+    EXPECT_EQ(2, String::FromCodePoint(0xB5).Size());
+    EXPECT_EQ("Ϣ", String::FromCodePoint(0x3E2));
+    EXPECT_EQ(2, String::FromCodePoint(0x3E2).Size());
+
+    // 3 bytes.
+    EXPECT_EQ("←", String::FromCodePoint(0x2190));
+    EXPECT_EQ(3, String::FromCodePoint(0x2190).Size());
+    EXPECT_EQ("侩", String::FromCodePoint(0x4FA9));
+    EXPECT_EQ(3, String::FromCodePoint(0x4FA9).Size());
+
+    // 4 bytes.
+    EXPECT_EQ("🂡", String::FromCodePoint(0x1F0A1));
+    EXPECT_EQ(4, String::FromCodePoint(0x1F0A1).Size());
+    EXPECT_EQ("🃵", String::FromCodePoint(0x1F0F5));
+    EXPECT_EQ(4, String::FromCodePoint(0x1F0F5).Size());
+}
+
+TEST(String, At)
+{
+    String s = "@aµϢ←侩🂡🃵";
+
+    EXPECT_EQ(s.At(8), 0);
+    EXPECT_EQ(s.At(7), 0x1F0F5);
+    EXPECT_EQ(s.At(6), 0x1F0A1);
+    EXPECT_EQ(s.At(5), 0x4FA9);
+    EXPECT_EQ(s.At(4), 0x2190);
+    EXPECT_EQ(s.At(3), 0x3E2);
+    EXPECT_EQ(s.At(2), 0xB5);
+    EXPECT_EQ(s.At(1), 0x61);
+    EXPECT_EQ(s.At(0), 0x40);
+}
+
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);

@@ -298,6 +298,69 @@ String String::Mid(size_t position, size_t count) const
     }
 }
 
+String::CodePoint String::At(size_t position) const
+{
+    if(position >= d->mLength)
+    {
+        return 0;
+    }
+    else
+    {
+        std::string::const_iterator begin;
+
+        position++;
+
+        for(begin = d->mString.cbegin(); 0 < position &&
+            begin != d->mString.cend(); ++begin)
+        {
+            if((*begin & 0xC0) != 0x80)
+            {
+                position--;
+            }
+        }
+
+        CodePoint cp = 0;
+
+        char bytes[4];
+
+        bytes[0] = *(--begin);
+
+        if(0 == (bytes[0] & 0x80))
+        {
+            cp = bytes[0] & 0x7F;
+        }
+        else if(0xC0 == (bytes[0] & 0xE0))
+        {
+            bytes[1] = *(++begin);
+
+            cp = (CodePoint)(((bytes[0] & 0x1F) << 6) |
+                (bytes[1] & 0x3F));
+        }
+        else if(0xE0 == (bytes[0] & 0xF0))
+        {
+            bytes[1] = *(++begin);
+            bytes[2] = *(++begin);
+
+            cp = (CodePoint)(((bytes[0] & 0x1F) << 12) |
+                ((bytes[1] & 0x3F) << 6) |
+                (bytes[2] & 0x3F));
+        }
+        else
+        {
+            bytes[1] = *(++begin);
+            bytes[2] = *(++begin);
+            bytes[3] = *(++begin);
+
+            cp = (CodePoint)(((bytes[0] & 0x0F) << 18) |
+                ((bytes[1] & 0x3F) << 12) |
+                ((bytes[2] & 0x3F) << 6) |
+                (bytes[3] & 0x3F));
+        }
+
+        return cp;
+    }
+}
+
 std::list<String> String::Split(const String& delimiter) const
 {
     // Used with fixes and integration.
@@ -604,4 +667,41 @@ const String libcomp::operator+(const String& a, const String& b)
     s += b;
 
     return s;
+}
+
+String String::FromCodePoint(CodePoint cp)
+{
+    unsigned char bytes[4];
+
+    // For the UTF-8 encoding format, see: https://en.wikipedia.org/wiki/UTF-8
+    if(0x80 > cp)
+    {
+        bytes[0] = cp & 0x7F;
+
+        return String(reinterpret_cast<char*>(bytes), 1);
+    }
+    else if(0x800 > cp)
+    {
+        bytes[0] = 0xC0 | ((cp >> 6) & 0x1F);
+        bytes[1] = 0x80 | (cp & 0x3F);
+
+        return String(reinterpret_cast<char*>(bytes), 2);
+    }
+    else if(0x10000 > cp)
+    {
+        bytes[0] = 0xE0 | ((cp >> 12) & 0x0F);
+        bytes[1] = 0x80 | ((cp >> 6) & 0x3F);
+        bytes[2] = 0x80 | (cp & 0x3F);
+
+        return String(reinterpret_cast<char*>(bytes), 3);
+    }
+    else
+    {
+        bytes[0] = 0xF0 | ((cp >> 18) & 0x07);
+        bytes[1] = 0x80 | ((cp >> 12) & 0x3F);
+        bytes[2] = 0x80 | ((cp >> 6) & 0x3F);
+        bytes[3] = 0x80 | (cp & 0x3F);
+
+        return String(reinterpret_cast<char*>(bytes), 4);
+    }
 }

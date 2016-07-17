@@ -44,6 +44,11 @@ class String
 {
 public:
     /**
+     * Unicode code point type.
+     */
+    typedef uint32_t CodePoint;
+
+    /**
      * Construct an empty string.
      */
     String();
@@ -142,6 +147,14 @@ public:
      * @returns Requested sub-string.
      */
     String Mid(size_t position, size_t count = 0) const;
+
+    /**
+     * Get a Unicode character at the desired position.
+     * @param position Number of characters into the string to get the
+     *   character at.
+     * @returns The Unicode code point at the desired position or 0.
+     */
+    CodePoint At(size_t position) const;
 
     /**
      * Split a string by a delimiter.
@@ -342,6 +355,13 @@ public:
 
     static String Join(const std::list<String>& strings,
         const String& delimiter);
+
+    /**
+     * Convert a Unicode code point into a String object.
+     * @param cp Unicode code point to transform into a String object.
+     * @returns The Unicode code point wrapped in a String object.
+     */
+    static String FromCodePoint(CodePoint cp);
 
 private:
     class StringData;
