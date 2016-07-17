@@ -27,6 +27,12 @@
 #ifndef LIBCOMP_SRC_CONSTANTS_H
 #define LIBCOMP_SRC_CONSTANTS_H
 
+namespace libcomp
+{
+
+/// Maximum number of bytes in a packet.
+#define MAX_PACKET_SIZE (16384)
+
 /// Maximum number of calls to trace when generating the backtrace.
 #define MAX_BACKTRACE_DEPTH (100)
 
@@ -160,8 +166,8 @@
 
 /**
  * Equip types used to determine the type of and where to place an equip.
- * @sa CompCharacterData::equip
- * @sa CompCharacterData::equipItem
+ * @sa BfCharacterData::equip
+ * @sa BfCharacterData::equipItem
  */
 typedef enum _EquipType
 {
@@ -198,5 +204,7 @@ typedef enum _EquipType
     /// Typically bullets
     EQUIP_TYPE_BULLETS
 }EquipType;
+
+} // namespace libcomp
 
 #endif // LIBCOMP_SRC_CONSTANTS_H

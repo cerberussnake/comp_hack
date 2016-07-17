@@ -264,7 +264,19 @@ public:
      * @param fillChar Character to pad the value with.
      * @returns String with the argument added.
      */
-    String Arg(int a, int fieldWidth = 0, int base = 10, char fillChar = ' ');
+    String Arg(int32_t a, int fieldWidth = 0, int base = 10,
+        char fillChar = ' ');
+
+    /**
+     * Replace the first argument with a number.
+     * @param a Number to place into the first argument.
+     * @param fieldWidth Minimum number of characters.
+     * @param base Base of the number (8, 10 or 16).
+     * @param fillChar Character to pad the value with.
+     * @returns String with the argument added.
+     */
+    String Arg(uint32_t a, int fieldWidth = 0, int base = 10,
+        char fillChar = ' ');
 
     /**
      * Compare the string to a C-style UTF-8 encoded string.

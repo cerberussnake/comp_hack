@@ -569,7 +569,18 @@ String String::Arg(const String& a) const
     return String(s);
 }
 
-String String::Arg(int a, int fieldWidth, int base, char fillChar)
+String String::Arg(int32_t a, int fieldWidth, int base, char fillChar)
+{
+    std::stringstream ss;
+    ss.width(fieldWidth);
+    ss.fill(fillChar);
+
+    ss << std::setbase(base) << a;
+
+    return Arg(String(ss.str()));
+}
+
+String String::Arg(uint32_t a, int fieldWidth, int base, char fillChar)
 {
     std::stringstream ss;
     ss.width(fieldWidth);

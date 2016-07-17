@@ -104,6 +104,6 @@ private:
  * Construct and throw a generic exception.
  * @param msg Message describing the exception.
  */
-#define EXCEPTION(msg) throw Exception(msg, __FILE__, __LINE__)
+#define EXCEPTION(msg) throw libcomp::Exception(msg, __FILE__, __LINE__)
 
 #endif // LIBCOMP_SRC_EXCEPTION_H

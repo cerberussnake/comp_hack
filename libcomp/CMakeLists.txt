@@ -50,10 +50,10 @@ SET(${PROJECT_NAME}_SRCS
     src/Exception.cpp
     src/Log.cpp
     #src/MemoryFile.cpp
-    #src/Packet.cpp
-    #src/PacketException.cpp
+    src/Packet.cpp
+    src/PacketException.cpp
     #src/PacketScript.cpp
-    #src/PlatformWindows.cpp
+    src/PlatformWindows.cpp
     #src/PEFile.cpp
     src/String.cpp
     #src/Structgen.cpp
@@ -81,34 +81,35 @@ ENDIF()
 # This is a list of all header files. Adding the header files here ensures they
 # are listed in the source files for IDE projects.
 SET(${PROJECT_NAME}_HDRS
-    #src/Compress.h
-    #src/Constants.h
-    #src/Convert.h
-    #src/Decrypt.h
-    #src/Endian.h
+    src/Compress.h
+    src/Constants.h
+    src/Convert.h
+    src/Decrypt.h
+    src/Endian.h
     #src/EngineLocker.h
     src/Exception.h
-    #src/Log.h
+    src/Log.h
     #src/MemoryFile.h
-    #src/Packet.h
-    #src/PacketException.h
+    src/Packet.h
+    src/PacketException.h
     #src/PacketScript.h
     #src/PEFile.h
     #src/PEFormat.h
     #src/Platform.h
     #src/PlatformLinux.h
     #src/PlatformWindows.h
+    src/String.h
     #src/Structgen.h
     #src/ThreadManager.h
     #src/XmlUtils.h
 
     # These were generated and are not worth reading.
-    #src/LookupTableCP1252.h
-    #src/LookupTableCP932.h
+    src/LookupTableCP1252.h
+    src/LookupTableCP932.h
 
     # Macros to temporarily disable warnings (wrapped around 3rd party libs).
-    #src/PushIgnore.h
-    #src/PopIgnore.h
+    src/PushIgnore.h
+    src/PopIgnore.h
 
     #src/MiCIconData.h
     #src/MiCIconDataScript.h
