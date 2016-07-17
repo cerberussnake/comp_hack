@@ -205,7 +205,7 @@ protected:
  * @relates Log
  */
 #define LOG_CRITICAL(msg) libcomp::Log::GetSingletonPtr()->LogMessage( \
-    Log::LOG_LEVEL_CRITICAL, msg)
+    libcomp::Log::LOG_LEVEL_CRITICAL, msg)
 
 /**
  * %Log an error message.
@@ -214,7 +214,7 @@ protected:
  * @relates Log
  */
 #define LOG_ERROR(msg)    libcomp::Log::GetSingletonPtr()->LogMessage( \
-    Log::LOG_LEVEL_ERROR, msg)
+    libcomp::Log::LOG_LEVEL_ERROR, msg)
 
 /**
  * %Log a warning message.
@@ -223,7 +223,7 @@ protected:
  * @relates Log
  */
 #define LOG_WARNING(msg)  libcomp::Log::GetSingletonPtr()->LogMessage( \
-    Log::LOG_LEVEL_WARNING, msg)
+    libcomp::Log::LOG_LEVEL_WARNING, msg)
 
 /**
  * %Log a informational message.
@@ -232,7 +232,7 @@ protected:
  * @relates Log
  */
 #define LOG_INFO(msg)     libcomp::Log::GetSingletonPtr()->LogMessage( \
-    Log::LOG_LEVEL_INFO, msg)
+    libcomp::Log::LOG_LEVEL_INFO, msg)
 
 /**
  * %Log a debug message.
@@ -241,6 +241,6 @@ protected:
  * @relates Log
  */
 #define LOG_DEBUG(msg)    libcomp::Log::GetSingletonPtr()->LogMessage( \
-    Log::LOG_LEVEL_DEBUG, msg)
+    libcomp::Log::LOG_LEVEL_DEBUG, msg)
 
 #endif // LIBCOMP_SRC_LOG_H
