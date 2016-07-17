@@ -25,7 +25,7 @@ ExternalProject_Add(
     GIT_TAG master
 
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/squirrel3
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_CXX_FLAGS=-std=c++11 -stdlib=libc++
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> "-DCMAKE_CXX_FLAGS=-std=c++11 -stdlib=libc++"
 
     # Dump output to a log instead of the screen.
     LOG_DOWNLOAD ON
@@ -82,7 +82,7 @@ ExternalProject_Add(
     GIT_TAG comp_hack
 
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/tinyxml2
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_FLAGS=-std=c++11 -stdlib=libc++
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DBUILD_SHARED_LIBS=OFF "-DCMAKE_CXX_FLAGS=-std=c++11 -stdlib=libc++"
 
     # Dump output to a log instead of the screen.
     LOG_DOWNLOAD ON
