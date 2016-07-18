@@ -56,6 +56,7 @@ SET(${PROJECT_NAME}_SRCS
     #src/PacketScript.cpp
     src/PlatformWindows.cpp
     #src/PEFile.cpp
+    src/ScriptEngine.cpp
     src/String.cpp
     #src/Structgen.cpp
     #src/ThreadManager.cpp
@@ -99,6 +100,7 @@ SET(${PROJECT_NAME}_HDRS
     #src/Platform.h
     #src/PlatformLinux.h
     #src/PlatformWindows.h
+    src/ScriptEngine.h
     src/String.h
     #src/Structgen.h
     #src/ThreadManager.h
@@ -220,13 +222,14 @@ ADD_LIBRARY(comp STATIC ${${PROJECT_NAME}_SRCS} ${${PROJECT_NAME}_HDRS}
     ${${PROJECT_NAME}_MOC_SRCS} ${${PROJECT_NAME}_STRUCTS})
 
 TARGET_LINK_LIBRARIES(comp ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARIES}
-    ${SYSTEM_LIBRARIES} squirrel)
+    ${SYSTEM_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} squirrel sqstdlib)
 
 # List of unit tests to add to CTest.
 SET(${PROJECT_NAME}_TEST_SRCS
     String
     Convert
     Decrypt
+    ScriptEngine
     #XmlUtils
 )
 

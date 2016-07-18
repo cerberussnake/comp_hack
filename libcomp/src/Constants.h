@@ -30,6 +30,9 @@
 namespace libcomp
 {
 
+/// Size of the stack that is used to talk to a Squirrel VM.
+#define SQUIRREL_STACK_SIZE (1024)
+
 /// Maximum number of bytes in a packet.
 #define MAX_PACKET_SIZE (16384)
 
