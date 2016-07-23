@@ -87,20 +87,26 @@ public:
     /**
      * Initialize a blank Packet object without any data.
      */
-    Packet();
+    explicit Packet();
+
+    /**
+     * @brief Move the packet data from another Packet object into this one.
+     * @param other Packet object to move the data from.
+     */
+    explicit Packet(Packet&& other);
 
     /**
      * Initialize a Packet object with @em data.
      * @param data Buffer of packet data to initalize the object with.
      */
-    Packet(const std::vector<char>& data);
+    explicit Packet(const std::vector<char>& data);
 
     /**
      * Initialize a Packet object with @em pBuffer of @em size bytes.
      * @param pData Buffer of packet data to initalize the object with.
      * @param sz Number of bytes in the data buffer.
      */
-    Packet(const void *pData, uint32_t sz);
+    explicit Packet(const void *pData, uint32_t sz);
 
     /**
      * Destructor to clean-up the object (free the data).
@@ -1015,6 +1021,12 @@ public:
      */
     int32_t Compress(int32_t sz);
 
+    /**
+     * @brief Move the packet data from another Packet object into this one.
+     * @param other Packet object to move the data from.
+     */
+    Packet& operator=(Packet&& other);
+
 private:
     /**
      * Add @em count bytes to the size of the packet. If this exceeds the
@@ -1022,6 +1034,11 @@ private:
      * @param count Number of bytes to add to the packet.
      */
     void GrowPacket(uint32_t count);
+
+    /**
+     * @brief Ensure the packet data buffer is allocated.
+     */
+    void Allocate();
 
     /// Current position in the packet.
     uint32_t mPosition;

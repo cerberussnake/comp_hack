@@ -59,67 +59,63 @@
 
 using namespace libcomp;
 
-Packet::Packet() : mPosition(0), mSize(0)
+Packet::Packet() : mPosition(0), mSize(0), mData(nullptr)
 {
     // The max packet size should be evenly divisible by 4 bytes.
-    if(0 != (MAX_PACKET_SIZE % 4))
-    {
-        PACKET_EXCEPTION("MAX_PACKET_SIZE not a multiple of 4", this);
-    }
-
-    // Allocate the packet data
-    mData = new uint8_t[MAX_PACKET_SIZE];
+    static_assert(0 == (MAX_PACKET_SIZE % 4),
+        "MAX_PACKET_SIZE not a multiple of 4");
 
     // Ensure the packet is clear and the variables are set.
     Clear();
 }
 
+Packet::Packet(Packet&& other) : mPosition(other.mPosition),
+    mSize(other.mSize), mData(other.mData)
+{
+    other.mPosition = 0;
+    other.mSize = 0;
+    other.mData = nullptr;
+
+    // Ensure the packet is clear and the variables are set.
+    other.Clear();
+}
+
 Packet::Packet(const std::vector<char>& data)
 {
-    // The max packet size should be evenly divisible by 4 bytes.
-    if(0 != (MAX_PACKET_SIZE % 4))
-    {
-        PACKET_EXCEPTION("MAX_PACKET_SIZE not a multiple of 4", this);
-    }
-
-    // Allocate the packet data
-    mData = new uint8_t[MAX_PACKET_SIZE];
-
     // Ensure the packet is clear and the variables are set.
     Clear();
 
     // If there is data to be written, use writeArray() to write it.
     if(!data.empty())
     {
-        WriteArray(data);
-    }
+        // Allocate the packet data.
+        Allocate();
 
-    // Rewind the packet back to the beginning.
-    Rewind();
+        // Write the data.
+        WriteArray(data);
+
+        // Rewind the packet back to the beginning.
+        Rewind();
+    }
 }
 
 Packet::Packet(const void *pData, uint32_t sz)
 {
-    // The max packet size should be evenly divisible by 4 bytes.
-    if(0 != (MAX_PACKET_SIZE % 4))
-    {
-        PACKET_EXCEPTION("MAX_PACKET_SIZE not a multiple of 4", this);
-    }
-
-    // Allocate the packet data
-    mData = new uint8_t[MAX_PACKET_SIZE];
-
     // Ensure the packet is clear and the variables are set.
     Clear();
 
     // If there is data to be written, use writeArray() to write it.
     if(0 < sz)
     {
-        WriteArray(pData, sz);
-    }
+        // Allocate the packet data.
+        Allocate();
 
-    // Rewind the packet back to the beginning.
-    Rewind();
+        // Write the data.
+        WriteArray(pData, sz);
+
+        // Rewind the packet back to the beginning.
+        Rewind();
+    }
 }
 
 Packet::~Packet()
@@ -130,6 +126,9 @@ Packet::~Packet()
 
 void Packet::GrowPacket(uint32_t sz)
 {
+    // Allocate the packet data (if needed).
+    Allocate();
+
     // Make sure the packet is growing.
     if(0 == sz)
     {
@@ -158,6 +157,15 @@ void Packet::GrowPacket(uint32_t sz)
     {
         // The new packet size is valid, set it.
         mSize = newSize;
+    }
+}
+
+void Packet::Allocate()
+{
+    // Ensure the packet data buffer is allocated.
+    if(nullptr == mData)
+    {
+        mData = new uint8_t[MAX_PACKET_SIZE];
     }
 }
 
@@ -960,6 +968,9 @@ void Packet::Clear()
     mSize = 0;
 
 #ifdef COMP_HACK_DEBUG
+    // Make sure the buffer is allocated before we fill it.
+    Allocate();
+
     uint32_t deadbeef = 0xEFBEADDE;
 
     // Fill the buffer with "dead beef" so you can see what is and isn't data.
@@ -1275,4 +1286,30 @@ int32_t Packet::Compress(int32_t sz)
     delete[] pData;
 
     return written;
+}
+
+Packet& Packet::operator=(Packet&& other)
+{
+    delete[] mData;
+
+    mPosition = other.mPosition;
+    mSize = other.mSize;
+    mData = other.mData;
+
+    other.mPosition = 0;
+    other.mSize = 0;
+
+    // The max packet size should be evenly divisible by 4 bytes.
+    if(0 != (MAX_PACKET_SIZE % 4))
+    {
+        PACKET_EXCEPTION("MAX_PACKET_SIZE not a multiple of 4", this);
+    }
+
+    // Allocate the packet data
+    other.mData = new uint8_t[MAX_PACKET_SIZE];
+
+    // Ensure the packet is clear and the variables are set.
+    other.Clear();
+
+    return *this;
 }
