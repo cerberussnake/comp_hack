@@ -229,6 +229,7 @@ SET(${PROJECT_NAME}_TEST_SRCS
     String
     Convert
     Decrypt
+    Packet
     ScriptEngine
     #XmlUtils
 )
