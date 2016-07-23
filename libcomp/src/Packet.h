@@ -1022,6 +1022,11 @@ public:
     int32_t Compress(int32_t sz);
 
     /**
+     * @brief Ensure the packet data buffer is allocated.
+     */
+    void Allocate();
+
+    /**
      * @brief Move the packet data from another Packet object into this one.
      * @param other Packet object to move the data from.
      */
@@ -1034,11 +1039,6 @@ private:
      * @param count Number of bytes to add to the packet.
      */
     void GrowPacket(uint32_t count);
-
-    /**
-     * @brief Ensure the packet data buffer is allocated.
-     */
-    void Allocate();
 
     /// Current position in the packet.
     uint32_t mPosition;
