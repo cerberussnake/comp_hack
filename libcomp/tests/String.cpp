@@ -364,6 +364,13 @@ TEST(String, At)
     EXPECT_EQ(s.At(0), 0x40);
 }
 
+TEST(String, Replace)
+{
+    String s = String("今日は月曜日です。初めまして。僕はオメガです。").Replace("は", "wa");
+
+    EXPECT_EQ(s, "今日wa月曜日です。初めまして。僕waオメガです。");
+}
+
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);

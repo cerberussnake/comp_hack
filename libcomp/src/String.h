@@ -231,6 +231,14 @@ public:
     String Trimmed() const;
 
     /**
+     * Replace all occurrences of substring with the given text.
+     * @param search Substring to replace.
+     * @param replace Text to replace the substring with.
+     * @returns Copy of the string with the substring replaces.
+     */
+    String Replace(const String& search, const String& replace) const;
+
+    /**
      * Replace the first argument of the string (%1) with the argument. All
      * other arguments will be shifted down by 1. No argument number may be
      * less than 1 or over 99. If an argument is used multiple times in the

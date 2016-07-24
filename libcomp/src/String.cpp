@@ -537,6 +537,27 @@ String String::Trimmed() const
     return String(s);
 }
 
+String String::Replace(const String& _search, const String& _replace) const
+{
+    std::string search = _search.d->mString;
+    std::string replace = _replace.d->mString;
+    std::string subject = d->mString;
+
+    if(!search.empty())
+    {
+        size_t pos = 0;
+
+        while(std::string::npos != (pos = subject.find(search, pos)))
+        {
+            subject.replace(pos, search.length(), replace);
+
+            pos += replace.length();
+        }
+    }
+
+    return String(subject);
+}
+
 String String::Arg(const String& a) const
 {
     int matchCount = 0;
