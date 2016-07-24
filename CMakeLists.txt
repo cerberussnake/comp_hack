@@ -24,7 +24,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 INCLUDE(${CMAKE_MODULE_PATH}/external.cmake)
 
 # Enable testing.
-ENABLE_TESTING()
+INCLUDE(CTest)
 
 # Default Linux (gcc/clang) builds to debug and MinGW builds to release.
 IF(NOT MSVC)
@@ -42,7 +42,6 @@ INCLUDE(TestBigEndian)
 TEST_BIG_ENDIAN(LIBCOMP_ENDIAN)
 IF(${LIBCOMP_ENDIAN})
     ADD_DEFINITIONS("-DLIBCOMP_BIGENDIAN")
-    MESSAGE("klsdahdf")
 ELSE(${LIBCOMP_ENDIAN})
     ADD_DEFINITIONS("-DLIBCOMP_LITTLEENDIAN")
 ENDIF(${LIBCOMP_ENDIAN})
