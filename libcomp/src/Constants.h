@@ -30,6 +30,27 @@
 namespace libcomp
 {
 
+/// Number of bits in a Blowfish key.
+#define BF_NET_KEY_BIT_SIZE (64)
+
+/// Number of bytes in a Blowfish key.
+#define BF_NET_KEY_BYTE_SIZE (BF_NET_KEY_BIT_SIZE / 8)
+
+/// Number of bits in a Diffie-Hellman key.
+#define DH_KEY_BIT_SIZE (1024)
+
+/// Number of hex digits for a Diffie-Hellman key.
+#define DH_KEY_HEX_SIZE (DH_KEY_BIT_SIZE / 4)
+
+/// Number of bytes in the Diffie-Hellman share data.
+#define DH_SHARED_DATA_SIZE (DH_KEY_BIT_SIZE / 8)
+
+/// Base "g" for a Diffie-Hellman key exchange (int format).
+#define DH_BASE_INT 2
+
+/// Base "g" for a Diffie-Hellman key exchange (string format).
+#define DH_BASE_STRING "2"
+
 /// Size of the stack that is used to talk to a Squirrel VM.
 #define SQUIRREL_STACK_SIZE (1024)
 
