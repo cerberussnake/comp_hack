@@ -57,6 +57,7 @@ SET(${PROJECT_NAME}_SRCS
     src/PlatformWindows.cpp
     #src/PEFile.cpp
     src/ReadOnlyPacket.cpp
+    src/RingBuffer.cpp
     src/ScriptEngine.cpp
     src/String.cpp
     #src/Structgen.cpp
@@ -93,6 +94,7 @@ SET(${PROJECT_NAME}_HDRS
     src/Exception.h
     src/Log.h
     #src/MemoryFile.h
+    src/MessageQueue.h
     src/Packet.h
     src/PacketException.h
     #src/PacketScript.h
@@ -102,6 +104,7 @@ SET(${PROJECT_NAME}_HDRS
     #src/PlatformLinux.h
     #src/PlatformWindows.h
     src/ReadOnlyPacket.h
+    src/RingBuffer.h
     src/ScriptEngine.h
     src/String.h
     #src/Structgen.h
