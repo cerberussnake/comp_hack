@@ -31,6 +31,7 @@ FILE(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/api/libcomp)
 
 INCLUDE_DIRECTORIES(${ZLIB_INCLUDES})
 INCLUDE_DIRECTORIES(${LIBCOMP_INCLUDES})
+INCLUDE_DIRECTORIES(${ASIO_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${SQUIRREL_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
@@ -49,8 +50,10 @@ SET(${PROJECT_NAME}_SRCS
     src/Decrypt.cpp
     #src/EngineLocker.cpp
     src/Exception.cpp
+    src/LobbyConnection.cpp
     src/Log.cpp
     #src/MemoryFile.cpp
+    src/MessagePacket.cpp
     src/Packet.cpp
     src/PacketException.cpp
     #src/PacketScript.cpp
@@ -61,6 +64,8 @@ SET(${PROJECT_NAME}_SRCS
     src/ScriptEngine.cpp
     src/String.cpp
     #src/Structgen.cpp
+    src/TcpConnection.cpp
+    src/TcpServer.cpp
     #src/ThreadManager.cpp
     #src/XmlUtils.cpp
 
@@ -92,8 +97,11 @@ SET(${PROJECT_NAME}_HDRS
     src/Endian.h
     #src/EngineLocker.h
     src/Exception.h
+    src/LobbyConnection.h
     src/Log.h
     #src/MemoryFile.h
+    src/Message.h
+    src/MessagePacket.h
     src/MessageQueue.h
     src/Packet.h
     src/PacketException.h
@@ -108,6 +116,8 @@ SET(${PROJECT_NAME}_HDRS
     src/ScriptEngine.h
     src/String.h
     #src/Structgen.h
+    src/TcpConnection.h
+    src/TcpServer.h
     #src/ThreadManager.h
     #src/XmlUtils.h
 
@@ -235,6 +245,7 @@ SET(${PROJECT_NAME}_TEST_SRCS
     Convert
     Decrypt
     Packet
+    DiffieHellman
     ScriptEngine
     #XmlUtils
 )
