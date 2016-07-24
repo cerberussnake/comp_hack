@@ -89,10 +89,15 @@ public:
     friend class PacketException;
 
     /**
+     * Initialize a blank Packet object without any data.
+     */
+    explicit ReadOnlyPacket();
+
+    /**
      * @brief Copy the packet data from another ReadOnlyPacket object.
      * @param other ReadOnlyPacket object to copy the data from.
      */
-    explicit ReadOnlyPacket(ReadOnlyPacket& other);
+    explicit ReadOnlyPacket(const ReadOnlyPacket& other);
 
     /**
      * @brief Copy part of the packet data from another ReadOnlyPacket object.
@@ -100,7 +105,7 @@ public:
      * @param start Number of bytes into the packet data.
      * @param size Size in bytes of the data to copy.
      */
-    explicit ReadOnlyPacket(ReadOnlyPacket& other,
+    explicit ReadOnlyPacket(const ReadOnlyPacket& other,
         uint32_t start, uint32_t size);
 
     /**
@@ -622,18 +627,21 @@ public:
     void Allocate();
 
     /**
-     * @brief Move the packet data from another Packet object into this one.
-     * @param other Packet object to move the data from.
+     * @brief Copy the packet data from another ReadOnlyPacket object.
+     * @param other ReadOnlyPacket object to move the data from.
+     */
+    ReadOnlyPacket& operator=(ReadOnlyPacket& other);
+
+    /**
+     * @brief Move the packet data from another ReadOnlyPacket object.
+     * @param other ReadOnlyPacket object to move the data from.
      */
     ReadOnlyPacket& operator=(ReadOnlyPacket&& other) = delete;
 
 protected:
-    /// Protected default constructor for use by subclasses.
-    explicit ReadOnlyPacket();
-
     /// Protected constructor for use by subclasses.
     explicit ReadOnlyPacket(uint32_t position, uint32_t size,
-        std::shared_ptr<uint8_t> data);
+        uint8_t *pData, std::shared_ptr<uint8_t> dataRef);
 
     /// Current position in the packet.
     uint32_t mPosition;
@@ -642,7 +650,11 @@ protected:
     uint32_t mSize;
 
     /// Pointer to the packet data.
-    std::shared_ptr<uint8_t> mData;
+    uint8_t *mData;
+
+    /// Reference to the underlying buffer (which could be shared between
+    /// read only packets).
+    std::shared_ptr<uint8_t> mDataRef;
 };
 
 } // namespace libcomp

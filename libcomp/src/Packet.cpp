@@ -66,17 +66,18 @@ Packet::Packet() : ReadOnlyPacket()
 }
 
 Packet::Packet(Packet&& other) : ReadOnlyPacket(other.mPosition, other.mSize,
-    other.mData)
+    other.mData, other.mDataRef)
 {
     other.mPosition = 0;
     other.mSize = 0;
+    other.mDataRef.reset();
     other.mData = nullptr;
 
     // Ensure the packet is clear and the variables are set.
     other.Clear();
 }
 
-Packet::Packet(const std::vector<char>& data)
+Packet::Packet(const std::vector<char>& data) : ReadOnlyPacket()
 {
     // Ensure the packet is clear and the variables are set.
     Clear();
@@ -95,7 +96,7 @@ Packet::Packet(const std::vector<char>& data)
     }
 }
 
-Packet::Packet(const void *pData, uint32_t sz)
+Packet::Packet(const void *pData, uint32_t sz) : ReadOnlyPacket()
 {
     // Ensure the packet is clear and the variables are set.
     Clear();
@@ -165,7 +166,7 @@ void Packet::WriteBlank(uint32_t count)
     // Grow the packet by the number of bytes we intend to write, set the bytes
     // to 0, and advance the current position by that many bytes.
     GrowPacket(count);
-    memset(mData.get() + mPosition, 0, count);
+    memset(mData + mPosition, 0, count);
     Skip(count);
 }
 
@@ -181,7 +182,7 @@ void Packet::WriteArray(const std::vector<char>& data)
     // the packet data at the current position, and advance the current
     // position by the number of bytes in the array.
     GrowPacket((uint32_t)data.size());
-    memcpy(mData.get() + mPosition, &data[0], (uint32_t)data.size());
+    memcpy(mData + mPosition, &data[0], (uint32_t)data.size());
     Skip((uint32_t)data.size());
 }
 
@@ -197,7 +198,7 @@ void Packet::WriteArray(const void *pData, uint32_t sz)
     // the packet data at the current position, and advance the current
     // position by the number of bytes in the array.
     GrowPacket(sz);
-    memcpy(mData.get() + mPosition, pData, sz);
+    memcpy(mData + mPosition, pData, sz);
     Skip(sz);
 }
 
@@ -279,7 +280,7 @@ void Packet::WriteU8(uint8_t value)
     // Grow the packet by the size of the value, copy the value into the packet
     // data, and advance the current packet position by the size of the value.
     GrowPacket(1);
-    memcpy(mData.get() + mPosition, &value, 1);
+    memcpy(mData + mPosition, &value, 1);
     Skip(1);
 }
 
@@ -288,7 +289,7 @@ void Packet::WriteS8(int8_t value)
     // Grow the packet by the size of the value, copy the value into the packet
     // data, and advance the current packet position by the size of the value.
     GrowPacket(1);
-    memcpy(mData.get() + mPosition, &value, 1);
+    memcpy(mData + mPosition, &value, 1);
     Skip(1);
 }
 
@@ -297,7 +298,7 @@ void Packet::WriteU16(uint16_t value)
     // Grow the packet by the size of the value, copy the value into the packet
     // data, and advance the current packet position by the size of the value.
     GrowPacket(2);
-    memcpy(mData.get() + mPosition, &value, 2);
+    memcpy(mData + mPosition, &value, 2);
     Skip(2);
 }
 
@@ -318,7 +319,7 @@ void Packet::WriteS16(int16_t value)
     // Grow the packet by the size of the value, copy the value into the packet
     // data, and advance the current packet position by the size of the value.
     GrowPacket(2);
-    memcpy(mData.get() + mPosition, &value, 2);
+    memcpy(mData + mPosition, &value, 2);
     Skip(2);
 }
 
@@ -339,7 +340,7 @@ void Packet::WriteU32(uint32_t value)
     // Grow the packet by the size of the value, copy the value into the packet
     // data, and advance the current packet position by the size of the value.
     GrowPacket(4);
-    memcpy(mData.get() + mPosition, &value, 4);
+    memcpy(mData + mPosition, &value, 4);
     Skip(4);
 }
 
@@ -360,7 +361,7 @@ void Packet::WriteS32(int32_t value)
     // Grow the packet by the size of the value, copy the value into the packet
     // data, and advance the current packet position by the size of the value.
     GrowPacket(4);
-    memcpy(mData.get() + mPosition, &value, 4);
+    memcpy(mData + mPosition, &value, 4);
     Skip(4);
 }
 
@@ -381,7 +382,7 @@ void Packet::WriteU64(uint64_t value)
     // Grow the packet by the size of the value, copy the value into the packet
     // data, and advance the current packet position by the size of the value.
     GrowPacket(8);
-    memcpy(mData.get() + mPosition, &value, 8);
+    memcpy(mData + mPosition, &value, 8);
     Skip(8);
 }
 
@@ -402,7 +403,7 @@ void Packet::WriteS64(int64_t value)
     // Grow the packet by the size of the value, copy the value into the packet
     // data, and advance the current packet position by the size of the value.
     GrowPacket(8);
-    memcpy(mData.get() + mPosition, &value, 8);
+    memcpy(mData + mPosition, &value, 8);
     Skip(8);
 }
 
@@ -423,7 +424,7 @@ void Packet::WriteFloat(float value)
     // Grow the packet by the size of the value, copy the value into the packet
     // data, and advance the current packet position by the size of the value.
     GrowPacket(4);
-    memcpy(mData.get() + mPosition, &value, 4);
+    memcpy(mData + mPosition, &value, 4);
     Skip(4);
 }
 
@@ -442,7 +443,7 @@ void Packet::Clear()
     // Fill the buffer with "dead beef" so you can see what is and isn't data.
     for(uint32_t i = 0; i < MAX_PACKET_SIZE; i += 4)
     {
-        memcpy(mData.get() + i, &deadbeef, 4);
+        memcpy(mData + i, &deadbeef, 4);
     }
 #endif // COMP_HACK_DEBUG
 }
@@ -457,7 +458,7 @@ void Packet::EraseRight()
 char* Packet::Data() const
 {
     // Return a pointer to the packet data.
-    return reinterpret_cast<char*>(mData.get());
+    return reinterpret_cast<char*>(mData);
 }
 
 char* Packet::Direct(uint32_t sz)
@@ -483,7 +484,7 @@ char* Packet::Direct(uint32_t sz)
     mSize = sz;
 
     // Return the pointer to the packet data.
-    return reinterpret_cast<char*>(mData.get());
+    return reinterpret_cast<char*>(mData);
 }
 
 void Packet::Split(Packet& other, uint32_t sz)
@@ -507,7 +508,7 @@ void Packet::Split(Packet& other, uint32_t sz)
     // Clear the other packet, write the data into it, and reset the current
     // position to the beginning of the packet.
     other.Clear();
-    other.ReadArray(mData.get() + mPosition, sz);
+    other.ReadArray(mData + mPosition, sz);
     other.Rewind();
 }
 
@@ -537,13 +538,13 @@ int32_t Packet::Decompress(int32_t sz)
     }
 
     // Copy the data to decompress.
-    memcpy(pData, mData.get() + mPosition, (size_t)sz);
+    memcpy(pData, mData + mPosition, (size_t)sz);
 
     // Update the size of the packet.
     mSize = mPosition;
 
     // Decompress the data
-    int32_t written = Compress::Decompress(pData, mData.get() + mPosition,
+    int32_t written = Compress::Decompress(pData, mData + mPosition,
         sz, (int32_t)(MAX_PACKET_SIZE - mSize));
 
     // Update the size.
@@ -581,13 +582,13 @@ int32_t Packet::Compress(int32_t sz)
     }
 
     // Copy the data to compress.
-    memcpy(pData, mData.get() + mPosition, (size_t)sz);
+    memcpy(pData, mData + mPosition, (size_t)sz);
 
     // Update the size.
     mSize = mPosition;
 
     // Compress the data
-    int32_t written = Compress::Compress(pData, mData.get() + mPosition,
+    int32_t written = Compress::Compress(pData, mData + mPosition,
         sz, (int32_t)(MAX_PACKET_SIZE - mSize));
 
     // Update the size.
@@ -603,19 +604,13 @@ Packet& Packet::operator=(Packet&& other)
 {
     mPosition = other.mPosition;
     mSize = other.mSize;
+    mDataRef = other.mDataRef;
     mData = other.mData;
 
     other.mPosition = 0;
     other.mSize = 0;
-
-    // The max packet size should be evenly divisible by 4 bytes.
-    if(0 != (MAX_PACKET_SIZE % 4))
-    {
-        PACKET_EXCEPTION("MAX_PACKET_SIZE not a multiple of 4", this);
-    }
-
-    // Allocate the packet data
-    other.mData = std::shared_ptr<uint8_t>(new uint8_t[MAX_PACKET_SIZE]);
+    other.mDataRef.reset();
+    other.mData = nullptr;
 
     // Ensure the packet is clear and the variables are set.
     other.Clear();

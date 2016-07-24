@@ -64,19 +64,20 @@ ReadOnlyPacket::ReadOnlyPacket() : mPosition(0), mSize(0), mData(nullptr)
 }
 
 ReadOnlyPacket::ReadOnlyPacket(uint32_t position, uint32_t size,
-    std::shared_ptr<uint8_t> data) : mPosition(position),
-    mSize(size), mData(data)
+    uint8_t *pData, std::shared_ptr<uint8_t> dataRef) : mPosition(position),
+    mSize(size), mData(pData), mDataRef(dataRef)
 {
 }
 
-ReadOnlyPacket::ReadOnlyPacket(ReadOnlyPacket& other) :
-    mPosition(other.mPosition), mSize(other.mSize), mData(other.mData)
+ReadOnlyPacket::ReadOnlyPacket(const ReadOnlyPacket& other) :
+    mPosition(other.mPosition), mSize(other.mSize), mData(other.mData),
+    mDataRef(other.mDataRef)
 {
 }
 
-ReadOnlyPacket::ReadOnlyPacket(ReadOnlyPacket& other,
-    uint32_t start, uint32_t size) :
-    mPosition(start), mSize(size), mData(other.mData)
+ReadOnlyPacket::ReadOnlyPacket(const ReadOnlyPacket& other,
+    uint32_t start, uint32_t size) : mPosition(0), mSize(size),
+    mData(&other.mData[start]), mDataRef(other.mDataRef)
 {
     if((start + size) > other.mSize)
     {
@@ -86,10 +87,12 @@ ReadOnlyPacket::ReadOnlyPacket(ReadOnlyPacket& other,
 }
 
 ReadOnlyPacket::ReadOnlyPacket(Packet&& other) :
-    mPosition(other.mPosition), mSize(other.mSize), mData(other.mData)
+    mPosition(other.mPosition), mSize(other.mSize), mData(other.mData),
+    mDataRef(other.mDataRef)
 {
     other.mPosition = 0;
     other.mSize = 0;
+    other.mDataRef.reset();
     other.mData = nullptr;
 
     // Ensure the ReadOnlypacket is clear and the variables are set.
@@ -105,7 +108,8 @@ void ReadOnlyPacket::Allocate()
     // Ensure the packet data buffer is allocated.
     if(nullptr == mData)
     {
-        mData = std::shared_ptr<uint8_t>(new uint8_t[MAX_PACKET_SIZE]);
+        mDataRef = std::shared_ptr<uint8_t>(new uint8_t[MAX_PACKET_SIZE]);
+        mData = mDataRef.get();
     }
 }
 
@@ -188,8 +192,8 @@ std::vector<char> ReadOnlyPacket::ReadArray(uint32_t sz)
 
     // Copy the ReadOnlypacket data into the array and advance the current position
     // past the array that was just read.
-    data.insert(data.begin(), reinterpret_cast<char*>(mData.get() + mPosition),
-        reinterpret_cast<char*>(mData.get() + mPosition + sz));
+    data.insert(data.begin(), reinterpret_cast<char*>(mData + mPosition),
+        reinterpret_cast<char*>(mData + mPosition + sz));
     Skip(sz);
 
     return data;
@@ -214,7 +218,7 @@ void ReadOnlyPacket::ReadArray(void *buffer, uint32_t sz)
 
     // Copy the ReadOnlypacket data into the array and advance the current position
     // past the array that was just read.
-    memcpy(buffer, mData.get() + mPosition, sz);
+    memcpy(buffer, mData + mPosition, sz);
     Skip(sz);
 }
 
@@ -322,7 +326,7 @@ uint8_t ReadOnlyPacket::PeekU8()
 
     // Copy the value into a variable to return.
     uint8_t value;
-    memcpy(&value, mData.get() + mPosition, 1);
+    memcpy(&value, mData + mPosition, 1);
 
     return value;
 }
@@ -339,7 +343,7 @@ uint16_t ReadOnlyPacket::PeekU16()
 
     // Copy the value into a variable to return.
     uint16_t value;
-    memcpy(&value, mData.get() + mPosition, 2);
+    memcpy(&value, mData + mPosition, 2);
 
     return value;
 }
@@ -368,7 +372,7 @@ uint32_t ReadOnlyPacket::PeekU32()
 
     // Copy the value into a variable to return.
     uint32_t value;
-    memcpy(&value, mData.get() + mPosition, 4);
+    memcpy(&value, mData + mPosition, 4);
 
     return value;
 }
@@ -398,7 +402,7 @@ uint8_t ReadOnlyPacket::ReadU8()
     // Copy the value into a variable to return and then advance the current
     // position by the size of the value.
     uint8_t value;
-    memcpy(&value, mData.get() + mPosition, 1);
+    memcpy(&value, mData + mPosition, 1);
     Skip(1);
 
     return value;
@@ -417,7 +421,7 @@ int8_t ReadOnlyPacket::ReadS8()
     // Copy the value into a variable to return and then advance the current
     // position by the size of the value.
     int8_t value;
-    memcpy(&value, mData.get() + mPosition, 1);
+    memcpy(&value, mData + mPosition, 1);
     Skip(1);
 
     return value;
@@ -436,7 +440,7 @@ uint16_t ReadOnlyPacket::ReadU16()
     // Copy the value into a variable to return and then advance the current
     // position by the size of the value.
     uint16_t value;
-    memcpy(&value, mData.get() + mPosition, 2);
+    memcpy(&value, mData + mPosition, 2);
     Skip(2);
 
     return value;
@@ -467,7 +471,7 @@ int16_t ReadOnlyPacket::ReadS16()
     // Copy the value into a variable to return and then advance the current
     // position by the size of the value.
     int16_t value;
-    memcpy(&value, mData.get() + mPosition, 2);
+    memcpy(&value, mData + mPosition, 2);
     Skip(2);
 
     return value;
@@ -498,7 +502,7 @@ uint32_t ReadOnlyPacket::ReadU32()
     // Copy the value into a variable to return and then advance the current
     // position by the size of the value.
     uint32_t value;
-    memcpy(&value, mData.get() + mPosition, 4);
+    memcpy(&value, mData + mPosition, 4);
     Skip(4);
 
     return value;
@@ -529,7 +533,7 @@ int32_t ReadOnlyPacket::ReadS32()
     // Copy the value into a variable to return and then advance the current
     // position by the size of the value.
     int32_t value;
-    memcpy(&value, mData.get() + mPosition, 4);
+    memcpy(&value, mData + mPosition, 4);
     Skip(4);
 
     return value;
@@ -560,7 +564,7 @@ uint64_t ReadOnlyPacket::ReadU64()
     // Copy the value into a variable to return and then advance the current
     // position by the size of the value.
     uint64_t value;
-    memcpy(&value, mData.get() + mPosition, 8);
+    memcpy(&value, mData + mPosition, 8);
     Skip(8);
 
     return value;
@@ -591,7 +595,7 @@ int64_t ReadOnlyPacket::ReadS64()
     // Copy the value into a variable to return and then advance the current
     // position by the size of the value.
     int64_t value;
-    memcpy(&value, mData.get() + mPosition, 8);
+    memcpy(&value, mData + mPosition, 8);
     Skip(8);
 
     return value;
@@ -622,7 +626,7 @@ float ReadOnlyPacket::ReadFloat()
     // Copy the value into a variable to return and then advance the current
     // position by the size of the value.
     float value;
-    memcpy(&value, mData.get() + mPosition, 4);
+    memcpy(&value, mData + mPosition, 4);
     Skip(4);
 
     return value;
@@ -662,7 +666,7 @@ uint32_t ReadOnlyPacket::Length() const
 const char* ReadOnlyPacket::ConstData() const
 {
     // Return a pointer to the ReadOnlypacket data.
-    return reinterpret_cast<const char*>(mData.get());
+    return reinterpret_cast<const char*>(mData);
 }
 
 void ReadOnlyPacket::HexDump() const
@@ -713,15 +717,15 @@ String ReadOnlyPacket::Dump() const
             }
             else if(mPosition == i)
             {
-                bufferp += dump_print("%02X}", mData.get()[i]);
+                bufferp += dump_print("%02X}", mData[i]);
             }
             else if(mPosition == (i + 1))
             {
-                bufferp += dump_print("%02X{", mData.get()[i]);
+                bufferp += dump_print("%02X{", mData[i]);
             }
             else
             {
-                bufferp += dump_print("%02X ", mData.get()[i]);
+                bufferp += dump_print("%02X ", mData[i]);
             }
         }
 
@@ -741,11 +745,11 @@ String ReadOnlyPacket::Dump() const
             if(i >= mSize)
                 bufferp += dump_print(mPosition == i ? "  }" : "   ");
             else if(mPosition == i)
-                bufferp += dump_print("%02X}", mData.get()[i]);
+                bufferp += dump_print("%02X}", mData[i]);
             else if(mPosition == (i + 1))
-                bufferp += dump_print("%02X{", mData.get()[i]);
+                bufferp += dump_print("%02X{", mData[i]);
             else
-                bufferp += dump_print("%02X ", mData.get()[i]);
+                bufferp += dump_print("%02X ", mData[i]);
         }
 
         // Print a space between the hex dump and the ASCII representation.
@@ -755,7 +759,7 @@ String ReadOnlyPacket::Dump() const
         // ASCII is included; all other characters are printed as a dot.
         for(uint32_t i = line; i < (line + 8) && i < mSize; ++i)
         {
-            uint8_t val = mData.get()[i];
+            uint8_t val = mData[i];
             bufferp += dump_print("%c",
                 (val >= 0x20 && val < 0x7f) ? val : '.');
         }
@@ -767,7 +771,7 @@ String ReadOnlyPacket::Dump() const
         // ASCII is included; all other characters are printed as a dot.
         for(uint32_t i = (line + 8); i < (line + 16) && i < mSize; ++i)
         {
-            uint8_t val = mData.get()[i];
+            uint8_t val = mData[i];
             bufferp += dump_print("%c",
                 (val >= 0x20 && val < 0x7f) ? val : '.');
         }
@@ -781,4 +785,14 @@ String ReadOnlyPacket::Dump() const
 
     // Join all the lines of the hex dump together and return the final string.
     return String::Join(final, "\n");
+}
+
+ReadOnlyPacket& ReadOnlyPacket::operator=(ReadOnlyPacket& other)
+{
+    mPosition = other.mPosition;
+    mSize = other.mSize;
+    mDataRef = other.mDataRef;
+    mData = other.mData;
+
+    return *this;
 }

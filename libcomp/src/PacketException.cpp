@@ -37,7 +37,7 @@ PacketException::PacketException(const String& msg,
     // original.
     if(pPacket && pPacket->mSize > 0)
     {
-        mPacket.WriteArray(pPacket->mData.get(), pPacket->mSize);
+        mPacket.WriteArray(pPacket->mData, pPacket->mSize);
         mPacket.mPosition = pPacket->mPosition;
     }
 }
