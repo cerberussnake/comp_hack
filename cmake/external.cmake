@@ -19,6 +19,39 @@
 INCLUDE(ExternalProject)
 
 ExternalProject_Add(
+    civet
+
+    GIT_REPOSITORY https://github.com/comphack/civetweb.git
+    GIT_TAG comp_hack
+
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/civetweb
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DBUILD_TESTING=OFF -DCIVETWEB_LIBRARIES_ONLY=ON -DCIVETWEB_ENABLE_SLL=ON -DCIVETWEB_ENABLE_SSL_DYNAMIC_LOADING=OFF -DCIVETWEB_ALLOW_WARNINGS=ON -DCIVETWEB_ENABLE_CXX=ON "-DCMAKE_CXX_FLAGS=-std=c++11 -stdlib=libc++"
+
+    # Dump output to a log instead of the screen.
+    LOG_DOWNLOAD ON
+    LOG_CONFIGURE ON
+    LOG_BUILD ON
+    LOG_INSTALL ON
+
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libcivetweb.a
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libcxx-library.a
+)
+
+ExternalProject_Get_Property(civet INSTALL_DIR)
+
+SET(CIVETWEB_INCLUDE_DIRS "${INSTALL_DIR}/include")
+
+ADD_LIBRARY(civetweb STATIC IMPORTED)
+ADD_DEPENDENCIES(civetweb civet)
+SET_TARGET_PROPERTIES(civetweb PROPERTIES IMPORTED_LOCATION
+    "${INSTALL_DIR}/lib/libcivetweb.a")
+
+ADD_LIBRARY(civetweb-cxx STATIC IMPORTED)
+ADD_DEPENDENCIES(civetweb-cxx civetweb)
+SET_TARGET_PROPERTIES(civetweb-cxx PROPERTIES IMPORTED_LOCATION
+    "${INSTALL_DIR}/lib/libcxx-library.a")
+
+ExternalProject_Add(
     squirrel3
 
     GIT_REPOSITORY https://github.com/comphack/squirrel3.git
