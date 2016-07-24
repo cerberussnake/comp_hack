@@ -27,8 +27,7 @@
 #include "Decrypt.h"
 #include "Config.h"
 #include "Exception.h"
-/// @todo Uncomment when the Packet class is included.
-//#include "Packet.h"
+#include "Packet.h"
 
 #include <openssl/crypto.h>
 #include <openssl/md5.h>
@@ -436,6 +435,23 @@ String Decrypt::GenDiffieHellman(const String& g, const String& p,
     return result;
 }
 
+void Decrypt::Encrypt(const BF_KEY& key, void *pVoidData, uint32_t dataSize)
+{
+    // Make room for the padded block.
+    if(0 == (dataSize % BLOWFISH_BLOCK_SIZE))
+    {
+        char *pData = reinterpret_cast<char*>(pVoidData);
+
+        // Encrypt each full block.
+        while(BLOWFISH_BLOCK_SIZE <= dataSize)
+        {
+            BF_encrypt(reinterpret_cast<BF_LONG*>(pData), &key);
+            pData += BLOWFISH_BLOCK_SIZE;
+            dataSize -= BLOWFISH_BLOCK_SIZE;
+        }
+    }
+}
+
 void Decrypt::Encrypt(const BF_KEY& key, std::vector<char>& data)
 {
     std::vector<char>::size_type size = data.size();
@@ -465,6 +481,23 @@ void Decrypt::Encrypt(const BF_KEY& key, std::vector<char>& data)
 void Decrypt::Encrypt(std::vector<char>& data)
 {
     Encrypt(gFileEncryptionKey, data);
+}
+
+void Decrypt::Decrypt(const BF_KEY& key, void *pVoidData, uint32_t dataSize)
+{
+    // Make room for the padded block.
+    if(0 == (dataSize % BLOWFISH_BLOCK_SIZE))
+    {
+        char *pData = reinterpret_cast<char*>(pVoidData);
+
+        // Decrypt each full block.
+        while(BLOWFISH_BLOCK_SIZE <= dataSize)
+        {
+            BF_decrypt(reinterpret_cast<BF_LONG*>(pData), &key);
+            pData += BLOWFISH_BLOCK_SIZE;
+            dataSize -= BLOWFISH_BLOCK_SIZE;
+        }
+    }
 }
 
 void Decrypt::Decrypt(const BF_KEY& key, std::vector<char>& data,
@@ -597,63 +630,55 @@ void Decrypt::DecryptCbc(std::vector<char>& data,
     DecryptCbc(gFileEncryptionKey, initializationVector, data, realSize);
 }
 
-#if 0
-/// @todo Uncomment when the Packet class is included.
-void Decrypt::EncryptPacket(const BF_KEY& key, Packet& p)
+void Decrypt::EncryptPacket(const BF_KEY& key, Packet& packet)
 {
-    // Skip over the sizes.
-    p.seek(BLOWFISH_BLOCK_SIZE);
+    uint32_t realSize = packet.Size() - 2 * sizeof(uint32_t);
 
-    // Buffer to store the current block of data.
-    BF_LONG buffer[BLOWFISH_BLOCK_SIZE / sizeof(BF_LONG)];
+    // Write the real size.
+    packet.Seek(4);
+    packet.WriteU32Big(realSize);
 
-    // Encrypt each block of data.
-    for(uint32_t i = BLOWFISH_BLOCK_SIZE; i < p.size();
-        i += BLOWFISH_BLOCK_SIZE)
+    // Round up the size of the packet to a multiple of BLOWFISH_BLOCK_SIZE.
+    uint32_t paddedSize = packet.Size() - 2 * sizeof(uint32_t);
+    paddedSize = ((paddedSize + BLOWFISH_BLOCK_SIZE - 1) /
+        BLOWFISH_BLOCK_SIZE) * BLOWFISH_BLOCK_SIZE;
+
+    // Make sure the packet is padded.
+    if(realSize != paddedSize)
     {
-        // Read the unencrypted data from the packet into the buffer.
-        p.readArray(buffer, BLOWFISH_BLOCK_SIZE);
-
-        // Move the packet pointer back.
-        p.rewind(BLOWFISH_BLOCK_SIZE);
-
-        // Encrypt the data in the buffer.
-        BF_encrypt(buffer, &key);
-
-        // Write the encrypted data back into the packet.
-        p.writeArray(buffer, BLOWFISH_BLOCK_SIZE);
+        packet.End();
+        packet.WriteBlank(paddedSize - realSize);
     }
 
-    // Seek back to the beginning of the packet.
-    p.rewind();
+    // Determine the start of the data to encrypt.
+    char *pData = packet.Data();
+    pData += 2 * sizeof(uint32_t);
+
+    // Encrypt the packet.
+    Encrypt(key, pData, paddedSize);
+
+    // Write the padded size.
+    packet.Rewind();
+    packet.WriteU32Big(paddedSize);
+    packet.End();
 }
 
-void Decrypt::DecryptPacket(const BF_KEY& key, Packet& p)
+void Decrypt::DecryptPacket(const BF_KEY& key, Packet& packet)
 {
-    // Skip over the sizes.
-    p.seek(BLOWFISH_BLOCK_SIZE);
-
-    // Buffer to store the current block of data.
-    BF_LONG buffer[BLOWFISH_BLOCK_SIZE / sizeof(BF_LONG)];
-
-    // Decrypt each block of data.
-    for(uint32_t i = BLOWFISH_BLOCK_SIZE; i < p.size();
-        i += BLOWFISH_BLOCK_SIZE)
+    // The packet must have at least one block and the sizes.
+    if((2 * sizeof(uint32_t) + BLOWFISH_BLOCK_SIZE) <= packet.Size())
     {
-        // Read the encrypted data from the packet into the buffer.
-        p.readArray(buffer, BLOWFISH_BLOCK_SIZE);
+        // Start from the beginning of the packet.
+        packet.Rewind();
 
-        // Move the packet pointer back.
-        p.rewind(BLOWFISH_BLOCK_SIZE);
+        // Get the padded size of the packet.
+        uint32_t paddedSize = packet.ReadU32Big();
 
-        // Decrypt the data in the buffer.
-        BF_decrypt(buffer, &key);
+        // Determine the start of the data to decrypt.
+        char *pData = packet.Data();
+        pData += 2 * sizeof(uint32_t);
 
-        // Write the unencrypted data back into the packet.
-        p.writeArray(buffer, BLOWFISH_BLOCK_SIZE);
+        // Encrypt the packet.
+        Decrypt(key, pData, paddedSize);
     }
-
-    // Seek back to the beginning of the packet.
-    p.rewind();
 }
-#endif

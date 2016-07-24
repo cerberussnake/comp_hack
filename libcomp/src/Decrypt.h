@@ -27,7 +27,8 @@
 #ifndef LIBCOMP_SRC_DECRYPT_H
 #define LIBCOMP_SRC_DECRYPT_H
 
-#include "Packet.h"
+/// libcomp Includes
+#include "String.h"
 
 #include "PushIgnore.h"
 #include <openssl/blowfish.h>
@@ -122,6 +123,15 @@ String GenDiffieHellman(const String& g, const String& p,
 /**
  * Encrypt a data buffer with Blowfish.
  * @param key Blowfish key to encrypt with.
+ * @param pData Data to be encrypted.
+ * @param dataSize Size of the data to be encrypted (in bytes).
+ * @note The data size should be a multiple of BLOWFISH_BLOCK_SIZE.
+ */
+void Encrypt(const BF_KEY& key, void *pData, uint32_t dataSize);
+
+/**
+ * Encrypt a data buffer with Blowfish.
+ * @param key Blowfish key to encrypt with.
  * @param data Data to be encrypted. The size may change on return.
  */
 void Encrypt(const BF_KEY& key, std::vector<char>& data);
@@ -132,6 +142,15 @@ void Encrypt(const BF_KEY& key, std::vector<char>& data);
  * @sa Config::ENCRYPTED_FILE_KEY
  */
 void Encrypt(std::vector<char>& data);
+
+/**
+ * Decrypt a data buffer with Blowfish.
+ * @param key Blowfish key to decrypt with.
+ * @param pData Data to be decrypted.
+ * @param dataSize Size of the data to be decrypted (in bytes).
+ * @note The data size should be a multiple of BLOWFISH_BLOCK_SIZE.
+ */
+void Decrypt(const BF_KEY& key, void *pData, uint32_t dataSize);
 
 /**
  * Decrypt a data buffer with Blowfish.
