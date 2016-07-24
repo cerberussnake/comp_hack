@@ -78,7 +78,7 @@ public:
      * @param file File the exception was thrown from.
      * @param line Line in the file the exception was thrown from.
      */
-    PacketException(const String& msg, const Packet *pPacket,
+    PacketException(const String& msg, const ReadOnlyPacket *pPacket,
         const String& file, int line);
 
     /**

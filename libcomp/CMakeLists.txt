@@ -56,6 +56,7 @@ SET(${PROJECT_NAME}_SRCS
     #src/PacketScript.cpp
     src/PlatformWindows.cpp
     #src/PEFile.cpp
+    src/ReadOnlyPacket.cpp
     src/ScriptEngine.cpp
     src/String.cpp
     #src/Structgen.cpp
@@ -100,6 +101,7 @@ SET(${PROJECT_NAME}_HDRS
     #src/Platform.h
     #src/PlatformLinux.h
     #src/PlatformWindows.h
+    src/ReadOnlyPacket.h
     src/ScriptEngine.h
     src/String.h
     #src/Structgen.h

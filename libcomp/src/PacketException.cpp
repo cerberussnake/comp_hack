@@ -29,14 +29,15 @@
 
 using namespace libcomp;
 
-PacketException::PacketException(const String& msg, const Packet *pPacket,
-    const String& _file, int _line) : Exception(msg, _file, _line)
+PacketException::PacketException(const String& msg,
+    const ReadOnlyPacket *pPacket, const String& _file, int _line) :
+    Exception(msg, _file, _line)
 {
     // Copy the packet so it may be modified and read without changing the
     // original.
     if(pPacket && pPacket->mSize > 0)
     {
-        mPacket.WriteArray(pPacket->mData, pPacket->mSize);
+        mPacket.WriteArray(pPacket->mData.get(), pPacket->mSize);
         mPacket.mPosition = pPacket->mPosition;
     }
 }
