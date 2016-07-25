@@ -101,6 +101,21 @@ TEST(ScriptEngine, EvalPrint)
     Log::GetSingletonPtr()->ClearHooks();
 }
 
+TEST(ScriptEngine, ReadOnlyPacket)
+{
+    Log::GetSingletonPtr()->AddStandardOutputHook();
+
+    ScriptEngine engine;
+
+    EXPECT_TRUE(engine.Eval(
+        "p <- Packet();\n"
+        "p.WriteBlank(3);\n"
+        "print(p.Size());\n"
+    ));
+
+    Log::GetSingletonPtr()->ClearHooks();
+}
+
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);

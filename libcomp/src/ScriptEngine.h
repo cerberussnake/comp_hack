@@ -44,6 +44,9 @@ public:
 
     bool Eval(const String& source, const String& sourceName = String());
 
+    void BindReadOnlyPacket();
+    void BindPacket();
+
 private:
     HSQUIRRELVM mVM;
 };

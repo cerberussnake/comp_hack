@@ -25,6 +25,7 @@
  */
 
 #include "ScriptEngine.h"
+
 #include "Constants.h"
 #include "Log.h"
 
@@ -33,7 +34,16 @@
 
 #include <sqstdaux.h>
 
+#include "PushIgnore.h"
+#include <sqrat.h>
+#include "PopIgnore.h"
+
+// Classes to Bind
+#include "Packet.h"
+#include "ReadOnlyPacket.h"
+
 using namespace libcomp;
+using namespace Sqrat;
 
 #if 0
 typedef void (*SQCOMPILERERROR)(HSQUIRRELVM /*v*/,const SQChar * /*desc*/,const SQChar * /*source*/,
@@ -114,6 +124,10 @@ ScriptEngine::ScriptEngine()
                 (int64_t)column).Arg(szDescription));
         });
     sq_setprintfunc(mVM, &SquirrelPrintFunction, &SquirrelErrorFunction);
+
+    // Bindings.
+    BindReadOnlyPacket();
+    BindPacket();
 }
 
 ScriptEngine::~ScriptEngine()
@@ -142,4 +156,21 @@ bool ScriptEngine::Eval(const String& source, const String& sourceName)
     sq_settop(mVM, top);
 
     return result;
+}
+
+void ScriptEngine::BindReadOnlyPacket()
+{
+    Class<ReadOnlyPacket> readOnlyPacketBinding(mVM, "ReadOnlyPacket");
+    readOnlyPacketBinding.Func("Size", &Packet::Size);
+
+    RootTable(mVM).Bind("ReadOnlyPacket", readOnlyPacketBinding);
+}
+
+void ScriptEngine::BindPacket()
+{
+    // Base class must be bound first.
+    DerivedClass<Packet, ReadOnlyPacket> packetBinding(mVM, "Packet");
+    packetBinding.Func("WriteBlank", &Packet::WriteBlank);
+
+    RootTable(mVM).Bind("Packet", packetBinding);
 }
