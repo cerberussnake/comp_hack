@@ -17,6 +17,9 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+# Print the CMake version for debugging.
+MESSAGE("-- CMake version: ${CMAKE_VERSION}")
+
 # Include our custom cmake modules.
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
