@@ -74,6 +74,12 @@ public:
     explicit Packet();
 
     /**
+     * @brief Copy the packet data from another Packet object into this one.
+     * @param other Packet object to copy the data from.
+     */
+    explicit Packet(const Packet& other);
+
+    /**
      * @brief Move the packet data from another Packet object into this one.
      * @param other Packet object to move the data from.
      */

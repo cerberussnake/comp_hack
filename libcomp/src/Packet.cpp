@@ -65,6 +65,18 @@ Packet::Packet() : ReadOnlyPacket()
     Clear();
 }
 
+Packet::Packet(const Packet& other) : ReadOnlyPacket(other.mPosition,
+    other.mSize, nullptr, nullptr)
+{
+    Allocate();
+
+    // Make sure the data pointer is valid first.
+    if(nullptr != mData)
+    {
+        memcpy(mData, other.mData, other.mSize);
+    }
+}
+
 Packet::Packet(Packet&& other) : ReadOnlyPacket(other.mPosition, other.mSize,
     other.mData, other.mDataRef)
 {
