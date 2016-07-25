@@ -35,6 +35,7 @@
 
 using namespace libcomp;
 
+#if 0
 TEST(Lobby, Connection)
 {
     libcomp::Log::GetSingletonPtr()->AddStandardOutputHook();
@@ -51,6 +52,7 @@ TEST(Lobby, Connection)
 
     serviceThread.join();
 }
+#endif
 
 int main(int argc, char *argv[])
 {
