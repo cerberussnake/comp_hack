@@ -19,6 +19,26 @@
 INCLUDE(ExternalProject)
 
 ExternalProject_Add(
+    sqrat
+
+    GIT_REPOSITORY https://github.com/comphack/sqrat.git
+    GIT_TAG comp_hack
+
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/sqrat
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> "-DCMAKE_CXX_FLAGS=-std=c++11 -stdlib=libc++"
+
+    # Dump output to a log instead of the screen.
+    LOG_DOWNLOAD ON
+    LOG_CONFIGURE ON
+    LOG_BUILD ON
+    LOG_INSTALL ON
+)
+
+ExternalProject_Get_Property(sqrat INSTALL_DIR)
+
+SET(SQRAT_INCLUDE_DIRS "${INSTALL_DIR}/include")
+
+ExternalProject_Add(
     civet
 
     GIT_REPOSITORY https://github.com/comphack/civetweb.git
