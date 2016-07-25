@@ -1,5 +1,5 @@
 language: cpp
-script: mkdir build && cd build && cmake .. && make && make Experimental
+script: export CC="${COMPILER_CC}" && export CXX="${COMPILER_CXX}" && mkdir build && cd build && cmake .. && make && make Experimental
 matrix:
   include:
     - compiler: gcc
@@ -10,8 +10,8 @@ matrix:
           packages:
             - g++-4.9
       env:
-        - CC=g++-4.9
-        - CXX=gcc-4.9
+        - COMPILER_CC=g++-4.9
+        - COMPILER_CXX=gcc-4.9
     - compiler: gcc
       addons:
         apt:
@@ -20,8 +20,8 @@ matrix:
           packages:
             - g++-5
       env:
-        - CC=gcc-5
-        - CXX=g++-5
+        - COMPILER_CC=gcc-5
+        - COMPILER_CXX=g++-5
     - compiler: clang
       addons:
         apt:
@@ -31,8 +31,8 @@ matrix:
           packages:
             - clang-3.6
       env:
-        - CC=clang-3.6
-        - CXX=clang++-3.6
+        - COMPILER_CC=clang-3.6
+        - COMPILER_CXX=clang++-3.6
     - compiler: clang
       addons:
         apt:
@@ -42,8 +42,8 @@ matrix:
           packages:
             - clang-3.7
       env:
-        - CC=clang-3.7
-        - CXX=clang++-3.7
+        - COMPILER_CC=clang-3.7
+        - COMPILER_CXX=clang++-3.7
     - compiler: clang
       addons:
         apt:
@@ -53,5 +53,5 @@ matrix:
           packages:
             - clang-3.8
       env:
-        - CC=clang-3.8
-        - CXX=clang++-3.8
+        - COMPILER_CC=clang-3.8
+        - COMPILER_CXX=clang++-3.8
