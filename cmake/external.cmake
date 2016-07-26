@@ -28,10 +28,10 @@ ExternalProject_Add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> "-DCMAKE_CXX_FLAGS=-std=c++11 ${SPECIAL_COMPILER_FLAGS}"
 
     # Dump output to a log instead of the screen.
-    LOG_DOWNLOAD ON
-    LOG_CONFIGURE ON
-    LOG_BUILD ON
-    LOG_INSTALL ON
+    LOG_DOWNLOAD OFF
+    LOG_CONFIGURE OFF
+    LOG_BUILD OFF
+    LOG_INSTALL OFF
 )
 
 ExternalProject_Get_Property(sqrat INSTALL_DIR)
@@ -81,10 +81,10 @@ ExternalProject_Add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> "-DCMAKE_CXX_FLAGS=-std=c++11 ${SPECIAL_COMPILER_FLAGS}"
 
     # Dump output to a log instead of the screen.
-    LOG_DOWNLOAD ON
-    LOG_CONFIGURE ON
-    LOG_BUILD ON
-    LOG_INSTALL ON
+    LOG_DOWNLOAD OFF
+    LOG_CONFIGURE OFF
+    LOG_BUILD OFF
+    LOG_INSTALL OFF
 
     #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libsquirrel.a
     #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libsqstdlib.a
@@ -118,10 +118,10 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
 
     # Dump output to a log instead of the screen.
-    LOG_DOWNLOAD ON
-    LOG_CONFIGURE ON
-    LOG_BUILD ON
-    LOG_INSTALL ON
+    LOG_DOWNLOAD OFF
+    LOG_CONFIGURE OFF
+    LOG_BUILD OFF
+    LOG_INSTALL OFF
 )
 
 ExternalProject_Get_Property(asio INSTALL_DIR)
@@ -138,10 +138,10 @@ ExternalProject_Add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DBUILD_SHARED_LIBS=OFF "-DCMAKE_CXX_FLAGS=-std=c++11 ${SPECIAL_COMPILER_FLAGS}"
 
     # Dump output to a log instead of the screen.
-    LOG_DOWNLOAD ON
-    LOG_CONFIGURE ON
-    LOG_BUILD ON
-    LOG_INSTALL ON
+    LOG_DOWNLOAD OFF
+    LOG_CONFIGURE OFF
+    LOG_BUILD OFF
+    LOG_INSTALL OFF
 
     #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libtinyxml2.a
 )
@@ -165,10 +165,10 @@ ExternalProject_Add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> "-DCMAKE_CXX_FLAGS=-std=c++11 ${SPECIAL_COMPILER_FLAGS}"
 
     # Dump output to a log instead of the screen.
-    LOG_DOWNLOAD ON
-    LOG_CONFIGURE ON
-    LOG_BUILD ON
-    LOG_INSTALL ON
+    LOG_DOWNLOAD OFF
+    LOG_CONFIGURE OFF
+    LOG_BUILD OFF
+    LOG_INSTALL OFF
 
     #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libyaml-cpp.a
 )
@@ -191,10 +191,10 @@ ExternalProject_Add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> "-DCMAKE_CXX_FLAGS=-std=c++11 ${SPECIAL_COMPILER_FLAGS}"
 
     # Dump output to a log instead of the screen.
-    LOG_DOWNLOAD ON
-    LOG_CONFIGURE ON
-    LOG_BUILD ON
-    LOG_INSTALL ON
+    LOG_DOWNLOAD OFF
+    LOG_CONFIGURE OFF
+    LOG_BUILD OFF
+    LOG_INSTALL OFF
 
     #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libgtest.a <INSTALL_DIR>/lib/libgmock.a
         <INSTALL_DIR>/lib/libgmock_main.a
@@ -251,10 +251,10 @@ ExternalProject_Add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> "-DCMAKE_CXX_FLAGS=-std=c++11 ${SPECIAL_COMPILER_FLAGS}"
 
     # Dump output to a log instead of the screen.
-    LOG_DOWNLOAD ON
-    LOG_CONFIGURE ON
-    LOG_BUILD ON
-    LOG_INSTALL ON
+    LOG_DOWNLOAD OFF
+    LOG_CONFIGURE OFF
+    LOG_BUILD OFF
+    LOG_INSTALL OFF
 
     #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libcucumber-cpp.a
         <INSTALL_DIR>/lib/libcucumber-cpp-nomain.a
