@@ -34,10 +34,10 @@ before_install:
   - sudo apt-get install libssl-dev doxygen cmake cmake-data -y
   - if [ "$CXX" == "clang++" ]; then export cwd="`pwd`"; fi
   - if [ "$CXX" == "clang++" ]; then cd /opt; fi
-  - if [ "$CXX" == "clang++" ]; then sudo wget http://llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz; fi
+  - if [ "$CXX" == "clang++" ]; then sudo wget -q http://llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz; fi
   - if [ "$CXX" == "clang++" ]; then sudo tar xf clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz; fi
   - if [ "$CXX" == "clang++" ]; then sudo rm clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz; fi
-  - if [ "$CXX" == "clang++" ]; then export PATH="/opt/llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04/bin:${PATH}"; fi
+  - if [ "$CXX" == "clang++" ]; then export PATH="/opt/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04/bin:${PATH}"; fi
   - if [ "$CXX" == "clang++" ]; then cd "$cwd"; fi
 
 script:
