@@ -38,6 +38,7 @@ before_install:
   - if [ "$CXX" == "clang++" ]; then sudo tar xf clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz; fi
   - if [ "$CXX" == "clang++" ]; then sudo rm clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz; fi
   - if [ "$CXX" == "clang++" ]; then export PATH="/opt/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04/bin:${PATH}"; fi
+  - if [ "$CXX" == "clang++" ]; then export LD_LIBRARY_PATH="/opt/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04/lib"; fi
   - if [ "$CXX" == "clang++" ]; then cd "$cwd"; fi
 
 script:
