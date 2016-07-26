@@ -52,7 +52,7 @@ matrix:
 before_install:
   - sudo add-apt-repository ppa:george-edison55/precise-backports -y
   - sudo apt-get update -q
-  - sudo apt-get install cmake doxygen -y
+  - sudo apt-get install libssl-dev cmake cmake-data doxygen -y
 
 script:
   - mkdir build && cd build && cmake .. && make && make Experimental
