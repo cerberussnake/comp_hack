@@ -1,5 +1,5 @@
 sudo: required
-dist: precise
+dist: trusty
 language: cpp
 
 matrix:
@@ -26,7 +26,7 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
+            - llvm-toolchain-trusty-3.6
           packages:
             - clang-3.6
       env: COMPILER=clang++-3.6
@@ -35,7 +35,7 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
+            - llvm-toolchain-trusty-3.7
           packages:
             - clang-3.7
       env: COMPILER=clang++-3.7
@@ -44,13 +44,13 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.8
+            - llvm-toolchain-trusty-3.8
           packages:
             - clang-3.8
       env: COMPILER=clang++-3.8
 
 before_install:
-  - sudo add-apt-repository ppa:george-edison55/precise-backports -y
+  - sudo add-apt-repository ppa:george-edison55/cmake-3.x -y
   - sudo apt-get update -q
   - sudo apt-get install libssl-dev cmake cmake-data doxygen -y
 
