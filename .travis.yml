@@ -30,7 +30,6 @@ matrix:
         - COMPILER_CXX=clang++
 
 before_install:
-  - sudo add-apt-repository ppa:george-edison55/precise-backports -y
   - sudo apt-get update -q
   - sudo apt-get install libssl-dev doxygen cmake cmake-data -y
   - if [ "$CXX" == "clang++" ]; then cd /opt; fi
