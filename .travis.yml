@@ -1,5 +1,5 @@
 sudo: required
-dist: precise
+dist: trusty
 language: cpp
 
 matrix:
@@ -11,7 +11,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.9
-            - cmake
       env:
         - COMPILER_CC=gcc-4.9
         - COMPILER_CXX=g++-4.9
@@ -26,53 +25,21 @@ matrix:
         - COMPILER_CC=gcc-5
         - COMPILER_CXX=g++-5
     - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-          packages:
-            - clang-3.6
       env:
-        - COMPILER_CC=clang-3.6
-        - COMPILER_CXX=clang++-3.6
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
-          packages:
-            - clang-3.7
-      env:
-        - COMPILER_CC=clang-3.7
-        - COMPILER_CXX=clang++-3.7
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.8
-          packages:
-            - clang-3.8
-      env:
-        - COMPILER_CC=clang-3.8
-        - COMPILER_CXX=clang++-3.8
+        - COMPILER_CC=clang
+        - COMPILER_CXX=clang++
 
 before_install:
   - sudo add-apt-repository ppa:george-edison55/precise-backports -y
   - sudo apt-get update -q
   - sudo apt-get install libssl-dev doxygen cmake cmake-data -y
+  - if [ "$CXX" == "clang++" ]; then cd /opt; fi
+  - if [ "$CXX" == "clang++" ]; then sudo wget http://llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz; fi
+  - if [ "$CXX" == "clang++" ]; then sudo tar xf clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz; fi
+  - if [ "$CXX" == "clang++" ]; then sudo rm clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz; fi
+  - if [ "$CXX" == "clang++" ]; then export PATH="/opt/llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04/bin:${PATH}"; fi
 
 script:
-  - if [ "$CXX" == "clang++" ]; then export cwd=`pwd`; fi
-  - if [ "$CXX" == "clang++" ]; then svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx; fi
-  - if [ "$CXX" == "clang++" ]; then cd libcxx/lib && bash buildit; fi
-  - if [ "$CXX" == "clang++" ]; then sudo cp ./libc++.so.1.0 /usr/lib/; fi
-  - if [ "$CXX" == "clang++" ]; then sudo mkdir /usr/include/c++/v1; fi
-  - if [ "$CXX" == "clang++" ]; then cd .. && sudo cp -r include/* /usr/include/c++/v1/; fi
-  - if [ "$CXX" == "clang++" ]; then cd /usr/lib && sudo ln -sf libc++.so.1.0 libc++.so; fi
-  - if [ "$CXX" == "clang++" ]; then sudo ln -sf libc++.so.1.0 libc++.so.1 && cd $cwd; fi
   - export CC="${COMPILER_CC}"
   - export CXX="${COMPILER_CXX}"
   - mkdir build && cd build && cmake .. && make && make Experimental
