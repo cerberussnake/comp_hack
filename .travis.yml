@@ -40,4 +40,4 @@ before_install:
   - export CXX="${COMPILER_CXX}"
 
 script:
-  - mkdir build && cd build && cmake .. && make && make Experimental
+  - mkdir -p build && cd build && cmake .. && make && make Experimental
