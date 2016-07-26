@@ -156,33 +156,6 @@ SET_TARGET_PROPERTIES(tinyxml2 PROPERTIES IMPORTED_LOCATION
     "${INSTALL_DIR}/lib/libtinyxml2.a")
 
 ExternalProject_Add(
-    yamlcpp
-
-    GIT_REPOSITORY https://github.com/comphack/yaml-cpp.git
-    GIT_TAG comp_hack
-
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/yaml-cpp
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> "-DCMAKE_CXX_FLAGS=-std=c++11 ${SPECIAL_COMPILER_FLAGS}"
-
-    # Dump output to a log instead of the screen.
-    LOG_DOWNLOAD OFF
-    LOG_CONFIGURE OFF
-    LOG_BUILD OFF
-    LOG_INSTALL OFF
-
-    #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libyaml-cpp.a
-)
-
-ExternalProject_Get_Property(yamlcpp INSTALL_DIR)
-
-SET(YAML_INCLUDE "${INSTALL_DIR}/include")
-
-ADD_LIBRARY(yaml-cpp STATIC IMPORTED)
-ADD_DEPENDENCIES(yaml-cpp yamlcpp)
-SET_TARGET_PROPERTIES(yaml-cpp PROPERTIES IMPORTED_LOCATION
-    "${INSTALL_DIR}/lib/libyaml-cpp.a")
-
-ExternalProject_Add(
     googletest
 
     GIT_REPOSITORY https://github.com/google/googletest.git
@@ -220,61 +193,3 @@ SET_TARGET_PROPERTIES(gmock_main PROPERTIES IMPORTED_LOCATION
     "${INSTALL_DIR}/lib/libgmock_main.a")
 
 SET(GMOCK_DIR "${INSTALL_DIR}")
-
-# Set the name of the project.
-PROJECT(comphack)
-
-# Determine if the system is FreeBSD.
-IF(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
-    SET(BSD TRUE)
-ENDIF(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
-
-FIND_PACKAGE(ZLIB REQUIRED)
-FIND_PACKAGE(Threads REQUIRED)
-
-SET(Boost_USE_STATIC_LIBS OFF)
-FIND_PACKAGE(Boost "1.40" COMPONENTS thread system regex date_time
-    program_options)
-
-ExternalProject_Add(
-    cucumbercpp
-
-    GIT_REPOSITORY https://github.com/comphack/cucumber-cpp.git
-    GIT_TAG comp_hack
-
-    CMAKE_ARGS "-DGMOCK_DIR=${GMOCK_DIR}" -DCUKE_DISABLE_E2E_TESTS=ON
-        -DCUKE_DISABLE_UNIT_TESTS=ON
-
-    DEPENDS googletest
-
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/cucumber-cpp
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> "-DCMAKE_CXX_FLAGS=-std=c++11 ${SPECIAL_COMPILER_FLAGS}"
-
-    # Dump output to a log instead of the screen.
-    LOG_DOWNLOAD OFF
-    LOG_CONFIGURE OFF
-    LOG_BUILD OFF
-    LOG_INSTALL OFF
-
-    #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libcucumber-cpp.a
-        <INSTALL_DIR>/lib/libcucumber-cpp-nomain.a
-)
-
-ExternalProject_Get_Property(cucumbercpp INSTALL_DIR)
-
-ADD_LIBRARY(cucumber-cpp STATIC IMPORTED)
-ADD_DEPENDENCIES(cucumber-cpp cucumbercpp)
-SET_TARGET_PROPERTIES(cucumber-cpp PROPERTIES IMPORTED_LOCATION
-    "${INSTALL_DIR}/lib/libcucumber-cpp.a")
-
-ADD_LIBRARY(cucumber-cpp-nomain STATIC IMPORTED)
-ADD_DEPENDENCIES(cucumber-cpp-nomain cucumbercpp)
-SET_TARGET_PROPERTIES(cucumber-cpp-nomain PROPERTIES IMPORTED_LOCATION
-    "${INSTALL_DIR}/lib/libcucumber-cpp-nomain.a")
-
-SET(CUKE_INCLUDE_DIR "${INSTALL_DIR}/include" ${Boost_INCLUDE_DIRS})
-SET(CUKE_LIBRARIES cucumber-cpp gmock gmock_main gtest
-    ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY}
-    ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY}
-    ${Boost_PROGRAM_OPTIONS_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT})
