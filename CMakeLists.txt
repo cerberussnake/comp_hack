@@ -17,6 +17,23 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+# http://stackoverflow.com/questions/14933172/
+IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    # Require at least GCC 4.9.
+    IF(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9)
+        MESSAGE(FATAL_ERROR "GCC version must be at least 4.9!")
+    ENDIF()
+ELSEIF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    SET(SPECIAL_COMPILER_FLAGS "-stdlib=libc++")
+
+    # Require at least Clang 3.4.
+    IF(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.4)
+        MESSAGE(FATAL_ERROR "Clang version must be at least 3.4!")
+    ENDIF()
+ELSE()
+    MESSAGE(WARNING "You are using an unsupported compiler!")
+ENDIF()
+
 # Print the CMake version for debugging.
 MESSAGE("-- CMake version: ${CMAKE_VERSION}")
 
@@ -49,7 +66,7 @@ ELSE(${LIBCOMP_ENDIAN})
     ADD_DEFINITIONS("-DLIBCOMP_LITTLEENDIAN")
 ENDIF(${LIBCOMP_ENDIAN})
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ${SPECIAL_COMPILER_FLAGS}")
 
 # Determine basic gcc/clang/mingw flags for release mode.
 IF(BUILD_SERVER)
