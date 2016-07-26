@@ -50,8 +50,9 @@ matrix:
       env: COMPILER=clang++-3.8
 
 before_install:
+  - sudo add-apt-repository ppa:george-edison55/precise-backports -y
   - sudo apt-get update -q
-  - sudo apt-get install libssl-dev doxygen -y
+  - sudo apt-get install libssl-dev doxygen cmake cmake-data -y
 
 script:
-  - mkdir build && cd build && cmake .. && make && make Experimental
+  - mkdir build && cd build && cmake -DCMAKE_COMPILER="${COMPILER}" .. && make && make Experimental
