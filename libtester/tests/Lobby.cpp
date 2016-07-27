@@ -35,7 +35,6 @@
 
 using namespace libcomp;
 
-#if 0
 TEST(Lobby, Connection)
 {
     libcomp::Log::GetSingletonPtr()->AddStandardOutputHook();
@@ -50,9 +49,15 @@ TEST(Lobby, Connection)
     libcomp::LobbyConnection connection(service);
     connection.Connect("127.0.0.1", 10666);
 
+    asio::deadline_timer timer(service);
+    timer.expires_from_now(boost::posix_time::seconds(30));
+    timer.async_wait([&service](asio::error_code)
+    {
+        service.stop();
+    });
+
     serviceThread.join();
 }
-#endif
 
 int main(int argc, char *argv[])
 {
