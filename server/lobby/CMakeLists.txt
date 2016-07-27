@@ -24,19 +24,41 @@ MESSAGE("** Configuring ${PROJECT_NAME} **")
 INCLUDE_DIRECTORIES(${TINYXML2_INCLUDE})
 INCLUDE_DIRECTORIES(${LIBCOMP_INCLUDES})
 INCLUDE_DIRECTORIES(${ASIO_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${TTVFS_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CIVETWEB_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/res/login)
 
 SET(${PROJECT_NAME}_SRCS
     src/LobbyServer.cpp
+    src/LoginWebHandler.cpp
     src/main.cpp
+
+    ${CMAKE_CURRENT_BINARY_DIR}/res/login/ResourceLogin.c
 )
 
 SET(${PROJECT_NAME}_HDRS
     src/LobbyServer.h
+    src/LoginWebHandler.h
+
+    ${CMAKE_CURRENT_BINARY_DIR}/res/login/ResourceLogin.h
 )
 
 SET(${PROJECT_NAME}_PACKETS
+)
+
+ADD_CUSTOM_COMMAND(
+    OUTPUT
+        ${CMAKE_CURRENT_BINARY_DIR}/res/login/ResourceLogin.c
+        ${CMAKE_CURRENT_BINARY_DIR}/res/login/ResourceLogin.h
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        ${CMAKE_CURRENT_BINARY_DIR}/res/login
+    COMMAND ${TTVFS_GEN_PATH} ResourceLogin ResourceLoginSize
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/login
+        ${CMAKE_CURRENT_BINARY_DIR}/res/login/ResourceLogin.c
+        ${CMAKE_CURRENT_BINARY_DIR}/res/login/ResourceLogin.h
+    DEPENDS ttvfs-ex
+    COMMENT "Generating resource file for the login screen"
 )
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS}
