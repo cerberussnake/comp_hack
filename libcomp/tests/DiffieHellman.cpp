@@ -106,7 +106,14 @@ TEST(DiffieHellman, KeyExchange)
 
 int main(int argc, char *argv[])
 {
-    ::testing::InitGoogleTest(&argc, argv);
+    try
+    {
+        ::testing::InitGoogleTest(&argc, argv);
+    }
+    catch(...)
+    {
+        return EXIT_FAILURE;
+    }
 
     return RUN_ALL_TESTS();
 }
