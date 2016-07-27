@@ -43,6 +43,13 @@ SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 # Include all build code for external projects.
 INCLUDE(${CMAKE_MODULE_PATH}/external.cmake)
 
+# A database is needed.
+FIND_PACKAGE(SQLite3 REQUIRED)
+
+IF(NOT SQLITE3_FOUND)
+    MESSAGE(FATAL_ERROR "You must have SQLite3 installed.")
+ENDIF()
+
 # Enable testing.
 INCLUDE(CTest)
 
