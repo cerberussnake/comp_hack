@@ -19,6 +19,43 @@
 INCLUDE(ExternalProject)
 
 ExternalProject_Add(
+    ttvfs-ex
+
+    GIT_REPOSITORY https://github.com/comphack/ttvfs.git
+    GIT_TAG comp_hack
+
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ttvfs
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> "-DCMAKE_CXX_FLAGS=-std=c++11 ${SPECIAL_COMPILER_FLAGS}"
+
+    # Dump output to a log instead of the screen.
+    LOG_DOWNLOAD ON
+    LOG_CONFIGURE ON
+    LOG_BUILD ON
+    LOG_INSTALL ON
+)
+
+ExternalProject_Get_Property(ttvfs-ex INSTALL_DIR)
+
+SET(TTVFS_INCLUDE_DIRS "${INSTALL_DIR}/include")
+
+ADD_LIBRARY(ttvfs STATIC IMPORTED)
+ADD_DEPENDENCIES(ttvfs ttvfs-ex)
+SET_TARGET_PROPERTIES(ttvfs PROPERTIES IMPORTED_LOCATION
+    "${INSTALL_DIR}/lib/libttvfs.a")
+
+ADD_LIBRARY(ttvfs_cfileapi STATIC IMPORTED)
+ADD_DEPENDENCIES(ttvfs_cfileapi ttvfs-ex)
+SET_TARGET_PROPERTIES(ttvfs_cfileapi PROPERTIES IMPORTED_LOCATION
+    "${INSTALL_DIR}/lib/libttvfs_cfileapi.a")
+
+ADD_LIBRARY(ttvfs_zip STATIC IMPORTED)
+ADD_DEPENDENCIES(ttvfs_zip ttvfs-ex)
+SET_TARGET_PROPERTIES(ttvfs_zip PROPERTIES IMPORTED_LOCATION
+    "${INSTALL_DIR}/lib/libttvfs_zip.a")
+
+SET(TTVFS_GEN_PATH "${INSTALL_DIR}/bin/ttvfs_gen")
+
+ExternalProject_Add(
     sqrat
 
     GIT_REPOSITORY https://github.com/comphack/sqrat.git
