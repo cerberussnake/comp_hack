@@ -40,6 +40,7 @@
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wunused-local-typedef"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 #if GCC_VERSION > 40201
 #pragma GCC diagnostic ignored "-Wignored-qualifiers"
