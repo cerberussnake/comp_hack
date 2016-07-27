@@ -190,8 +190,6 @@ String Decrypt::GenerateRandom(int sz)
     if(0 < sz && 0 != (sz % 2))
     {
         EXCEPTION(String("Odd size detected in call to GenerateRandom()"));
-
-        return String();
     }
 
     // If no size was passed in, assume 80 digits; otherwise, divide the size
@@ -209,8 +207,6 @@ String Decrypt::GenerateRandom(int sz)
     if(nullptr == pbData)
     {
         EXCEPTION(tr("Failed to allocate pbData"));
-
-        return String();
     }
 
     // On Windows, use the cryto API to generate the random data. Acquire a
@@ -221,8 +217,6 @@ String Decrypt::GenerateRandom(int sz)
         delete[] pbData;
 
         EXCEPTION(tr("CryptAcquireContext: %1").arg(getLastErrorString()));
-
-        return String();
     }
 
     // Generate the random data.
@@ -231,8 +225,6 @@ String Decrypt::GenerateRandom(int sz)
         delete[] pbData;
 
         EXCEPTION(tr("CryptGenRandom: %1").arg(getLastErrorString()));
-
-        return String();
     }
 
     // Release the context.
@@ -241,8 +233,6 @@ String Decrypt::GenerateRandom(int sz)
         delete[] pbData;
 
         EXCEPTION(tr("CryptReleaseContext: %1").arg(getLastErrorString()));
-
-        return String();
     }
 
     // Convert the raw data to a QByteArray.
@@ -256,8 +246,6 @@ String Decrypt::GenerateRandom(int sz)
     if(random.size() != sz)
     {
         EXCEPTION("Failed to read from /dev/urandom");
-
-        return String();
     }
 #endif // WIN32
 

@@ -44,8 +44,6 @@ RingBuffer::RingBuffer(int32_t capacity) : mBuffer(nullptr),
     if(1 >= capacity)
     {
         throw RingBuffer::Exception("Capacity is not greater than one.");
-
-        return;
     }
 
     // Get the page size to round the capacity with.
@@ -61,8 +59,6 @@ RingBuffer::RingBuffer(int32_t capacity) : mBuffer(nullptr),
     if(!IsMultipleOfTwo(capacity))
     {
         throw RingBuffer::Exception("Capacity is not a multiple of two.");
-
-        return;
     }
 
     // Set the capacity and the wrap-around mask.
@@ -78,8 +74,6 @@ RingBuffer::RingBuffer(int32_t capacity) : mBuffer(nullptr),
     if(INVALID_HANDLE_VALUE == mMapFile)
     {
         throw MemoryMapException();
-
-        return;
     }
 
     mBuffer = reinterpret_cast<int8_t*>(MapViewOfFile(mMapFile,
@@ -87,11 +81,9 @@ RingBuffer::RingBuffer(int32_t capacity) : mBuffer(nullptr),
 
     if(nullptr == mBuffer)
     {
-        throw MemoryMapException();
-
         CloseHandle(mMapFile);
 
-        return;
+        throw MemoryMapException();
     }
     else
     {
@@ -105,11 +97,9 @@ RingBuffer::RingBuffer(int32_t capacity) : mBuffer(nullptr),
     // Check the pointer to the mapped file.
     if(nullptr == mBuffer)
     {
-        throw MemoryMapException();
-
         CloseHandle(mMapFile);
 
-        return;
+        throw MemoryMapException();
     }
 
     int8_t *pBuffer2 = &mBuffer[capacity];
@@ -121,14 +111,12 @@ RingBuffer::RingBuffer(int32_t capacity) : mBuffer(nullptr),
     // Check the second pointer to the mapped file is correct.
     if(nullptr == pSecondBuffer || pSecondBuffer != &mBuffer[capacity])
     {
-        throw MemoryMapException();
-
         UnmapViewOfFile(mBuffer);
         CloseHandle(mMapFile);
 
         mBuffer = nullptr;
 
-        return;
+        throw MemoryMapException();
     }
 #else // !WIN32
 
@@ -142,24 +130,18 @@ RingBuffer::RingBuffer(int32_t capacity) : mBuffer(nullptr),
     if(0 > fd)
     {
         throw MemoryMapException();
-
-        return;
     }
 
     // Delete the file now that we have the descriptor to the memory.
     if(0 != unlink(szPath))
     {
         throw MemoryMapException();
-
-        return;
     }
 
     // Adjust the size of the file to the capacity of the ring buffer.
     if(0 != ftruncate(fd, capacity))
     {
         throw MemoryMapException();
-
-        return;
     }
 
     // Memory map the file once to reserve the memory for both mappings.
@@ -169,11 +151,9 @@ RingBuffer::RingBuffer(int32_t capacity) : mBuffer(nullptr),
     // Check if the memory was mapped.
     if(MAP_FAILED == mBuffer)
     {
-        throw MemoryMapException();
-
         mBuffer = nullptr;
 
-        return;
+        throw MemoryMapException();
     }
 
     // Map the first copy of the buffer.
@@ -184,12 +164,10 @@ RingBuffer::RingBuffer(int32_t capacity) : mBuffer(nullptr),
     // Check the mapping of the first buffer.
     if(mBuffer != pFirstBuffer)
     {
-        throw MemoryMapException();
-
         munmap(mBuffer, (size_t)capacity * 2);
         mBuffer = nullptr;
 
-        return;
+        throw MemoryMapException();
     }
 
     // Map the second copy of the buffer.
@@ -200,21 +178,19 @@ RingBuffer::RingBuffer(int32_t capacity) : mBuffer(nullptr),
     // Check the mapping of the second buffer.
     if(&mBuffer[capacity] != pSecondBuffer)
     {
-        throw MemoryMapException();
-
         munmap(mBuffer, (size_t)capacity * 2);
         mBuffer = nullptr;
 
-        return;
+        throw MemoryMapException();
     }
 
     // Close the file descriptor as it is no longer needed.
     if(0 != close(fd))
     {
-        throw MemoryMapException();
-
         munmap(mBuffer, (size_t)capacity * 2);
         mBuffer = nullptr;
+
+        throw MemoryMapException();
     }
 #endif // WIN32
 }
