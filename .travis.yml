@@ -55,7 +55,7 @@ script:
   - sudo chown -R $USER:$GROUP /var/log/cassandra
   - export CASSANDRA_HOME="/opt/cassandra"
   - export PATH="$PATH:$CASSANDRA_HOME/bin"
-  - sudo sh cassandra -R
+  - sudo sh "$CASSANDRA_HOME/bin/cassandra" -R
   - sleep 10
   - nodetool status
   - cqlsh -e "SHOW HOST; SHOW VERSION;"
