@@ -2,6 +2,9 @@ sudo: required
 dist: trusty
 language: cpp
 
+jdk:
+  - oraclejdk8
+
 env:
   global:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
@@ -40,4 +43,6 @@ before_install:
   - export CXX="${COMPILER_CXX}"
 
 script:
+  - jdk_switcher use oraclejdk8
+  - java -version
   - mkdir -p build && cd build && cmake .. && make && make Experimental
