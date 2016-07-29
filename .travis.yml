@@ -45,4 +45,18 @@ before_install:
 script:
   - jdk_switcher use oraclejdk8
   - java -version
+  - wget http://www.apache.org/dyn/closer.lua/cassandra/3.7/apache-cassandra-3.7-bin.tar.gz
+  - tar xvzf apache-cassandra-3.3-bin.tar.gz
+  - sudo mv apache-cassandra-3.3 /opt/cassandra
+  - rm apache-cassandra-3.3-bin.tar.gz
+  - sudo mkdir /var/lib/cassandra
+  - sudo mkdir /var/log/cassandra
+  - sudo chown -R $USER:$GROUP /var/lib/cassandra
+  - sudo chown -R $USER:$GROUP /var/log/cassandra
+  - export CASSANDRA_HOME="/opt/cassandra"
+  - export PATH="$PATH:$CASSANDRA_HOME/bin"
+  - sudo sh cassandra -R
+  - sleep 10
+  - nodetool status
+  - cqlsh -e "SHOW HOST; SHOW VERSION;"
   - mkdir -p build && cd build && cmake .. && make && make Experimental
