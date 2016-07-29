@@ -27,7 +27,7 @@ matrix:
 
 before_install:
   - sudo apt-get update -q
-  - sudo apt-get install libboost-dev libssl-dev doxygen cmake cmake-data libsqlite3-dev sqlite3 -y
+  - sudo apt-get install libboost-dev libssl-dev doxygen cmake cmake-data libsqlite3-dev sqlite3 libuv-dev -y
   - if [ "$CXX" == "clang++" ]; then export cwd="`pwd`"; fi
   - if [ "$CXX" == "clang++" ]; then cd /opt; fi
   - if [ "$CXX" == "clang++" ]; then sudo wget -q http://llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz; fi

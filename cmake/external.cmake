@@ -19,6 +19,31 @@
 INCLUDE(ExternalProject)
 
 ExternalProject_Add(
+    cassandra-cpp
+
+    GIT_REPOSITORY https://github.com/datastax/cpp-driver.git
+    GIT_TAG 2.4.2
+
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/cassandra
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> "-DCMAKE_CXX_FLAGS=-std=c++11 ${SPECIAL_COMPILER_FLAGS}" -DCASS_BUILD_SHARED=OFF -DCASS_BUILD_STATIC=ON -DCASS_USE_STATIC_LIBS=ON -DCASS_USE_STD_ATOMIC=ON -DCASS_USE_ZLIB=ON
+
+    # Dump output to a log instead of the screen.
+    LOG_DOWNLOAD ON
+    LOG_CONFIGURE ON
+    LOG_BUILD ON
+    LOG_INSTALL ON
+)
+
+ExternalProject_Get_Property(cassandra-cpp INSTALL_DIR)
+
+SET(CASSANDRA_INCLUDE_DIRS "${INSTALL_DIR}/include")
+
+ADD_LIBRARY(cassandra STATIC IMPORTED)
+ADD_DEPENDENCIES(cassandra cassandra-cpp)
+SET_TARGET_PROPERTIES(cassandra PROPERTIES IMPORTED_LOCATION
+    "${INSTALL_DIR}/lib/libcassandra_static.a")
+
+ExternalProject_Add(
     ttvfs-ex
 
     GIT_REPOSITORY https://github.com/comphack/ttvfs.git
