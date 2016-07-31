@@ -51,6 +51,11 @@ ENDIF(BSD)
 SET(${PROJECT_NAME}_SRCS
     src/Compress.cpp
     src/Convert.cpp
+    src/Database.cpp
+    src/DatabaseCassandra.cpp
+    src/DatabaseQuery.cpp
+    src/DatabaseQueryCassandra.cpp
+    src/DatabaseSQLite3.cpp
     src/Decrypt.cpp
     #src/EngineLocker.cpp
     src/Exception.cpp
@@ -97,6 +102,11 @@ SET(${PROJECT_NAME}_HDRS
     src/Compress.h
     src/Constants.h
     src/Convert.h
+    src/Database.h
+    src/DatabaseCassandra.h
+    src/DatabaseQuery.h
+    src/DatabaseQueryCassandra.h
+    src/DatabaseSQLite3.h
     src/Decrypt.h
     src/Endian.h
     #src/EngineLocker.h
@@ -242,16 +252,17 @@ ADD_LIBRARY(comp STATIC ${${PROJECT_NAME}_SRCS} ${${PROJECT_NAME}_HDRS}
 
 TARGET_LINK_LIBRARIES(comp ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARIES}
     ${SYSTEM_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${SQLITE3_LIBRARIES}
-    squirrel sqstdlib ttvfs ttvfs_zip cassandra)
+    squirrel sqstdlib ttvfs ttvfs_zip cassandra uv)
 
 # List of unit tests to add to CTest.
 SET(${PROJECT_NAME}_TEST_SRCS
-    String
+    Cassandra
     Convert
     Decrypt
-    Packet
     DiffieHellman
+    Packet
     ScriptEngine
+    String
     #XmlUtils
 )
 

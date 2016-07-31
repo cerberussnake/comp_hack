@@ -1,10 +1,10 @@
 /**
- * @file libcomp/src/Database.h
+ * @file libcomp/src/DatabaseCassandra.h
  * @ingroup libcomp
  *
  * @author COMP Omega <compomega@tutanota.com>
  *
- * @brief Base class to handle the database.
+ * @brief Class to handle a Cassandra database.
  *
  * This file is part of the COMP_hack Library (libcomp).
  *
@@ -24,33 +24,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBCOMP_SRC_DATABASE_H
-#define LIBCOMP_SRC_DATABASE_H
+#ifndef LIBCOMP_SRC_DATABASECASSANDRA_H
+#define LIBCOMP_SRC_DATABASECASSANDRA_H
 
 // libcomp Includes
-#include "DatabaseQuery.h"
-#include "String.h"
+#include "Database.h"
+
+// Cassandra Includes
+#include <cassandra.h>
 
 namespace libcomp
 {
 
-class Database
+class DatabaseCassandra : public Database
 {
 public:
+    friend class DatabaseQueryCassandra;
+
+    DatabaseCassandra();
+    virtual ~DatabaseCassandra();
+
     virtual bool Open(const String& address, const String& username = String(),
-        const String& password = String()) = 0;
-    virtual bool Close() = 0;
-    virtual bool IsOpen() const = 0;
+        const String& password = String());
+    virtual bool Close();
+    virtual bool IsOpen() const;
 
-    virtual DatabaseQuery Prepare(const String& query) = 0;
-    virtual bool Execute(const String& query);
-
-    String GetLastError() const;
+    virtual DatabaseQuery Prepare(const String& query);
 
 protected:
-    String mError;
+    bool WaitForFuture(CassFuture *pFuture);
+
+    CassSession* GetSession() const;
+
+private:
+    CassCluster *mCluster;
+    CassSession *mSession;
 };
 
 } // namespace libcomp
 
-#endif // LIBCOMP_SRC_DATABASE_H
+#endif // LIBCOMP_SRC_DATABASECASSANDRA_H

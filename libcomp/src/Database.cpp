@@ -24,33 +24,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBCOMP_SRC_DATABASE_H
-#define LIBCOMP_SRC_DATABASE_H
+#include "Database.h"
 
-// libcomp Includes
-#include "DatabaseQuery.h"
-#include "String.h"
+using namespace libcomp;
 
-namespace libcomp
+bool Database::Execute(const String& query)
 {
+    return Prepare(query).Execute();
+}
 
-class Database
+String Database::GetLastError() const
 {
-public:
-    virtual bool Open(const String& address, const String& username = String(),
-        const String& password = String()) = 0;
-    virtual bool Close() = 0;
-    virtual bool IsOpen() const = 0;
-
-    virtual DatabaseQuery Prepare(const String& query) = 0;
-    virtual bool Execute(const String& query);
-
-    String GetLastError() const;
-
-protected:
-    String mError;
-};
-
-} // namespace libcomp
-
-#endif // LIBCOMP_SRC_DATABASE_H
+    return mError;
+}
