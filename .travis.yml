@@ -46,7 +46,7 @@ script:
   - jdk_switcher use oraclejdk8
   - java -version
   - wget http://apache.claz.org/cassandra/3.7/apache-cassandra-3.7-bin.tar.gz
-  - tar xvzf apache-cassandra-3.7-bin.tar.gz
+  - tar xzf apache-cassandra-3.7-bin.tar.gz
   - sudo mv apache-cassandra-3.7 /opt/cassandra
   - rm apache-cassandra-3.7-bin.tar.gz
   - sudo mkdir /var/lib/cassandra
