@@ -84,6 +84,9 @@ class PacketException;
  */
 class ReadOnlyPacket
 {
+private:
+    typedef std::array<uint8_t, MAX_PACKET_SIZE> PacketArray;
+
 public:
     /// This class needs to directly access data in the Packet class.
     friend class PacketException;
@@ -641,7 +644,7 @@ public:
 protected:
     /// Protected constructor for use by subclasses.
     explicit ReadOnlyPacket(uint32_t position, uint32_t size,
-        uint8_t *pData, std::shared_ptr<uint8_t> dataRef);
+        uint8_t *pData, std::shared_ptr<PacketArray> dataRef);
 
     /// Current position in the packet.
     uint32_t mPosition;
@@ -654,7 +657,7 @@ protected:
 
     /// Reference to the underlying buffer (which could be shared between
     /// read only packets).
-    std::shared_ptr<uint8_t> mDataRef;
+    std::shared_ptr<PacketArray> mDataRef;
 };
 
 } // namespace libcomp

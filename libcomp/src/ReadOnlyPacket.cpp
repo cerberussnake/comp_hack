@@ -30,6 +30,8 @@
 #include "Log.h"
 #include "PacketException.h"
 
+#include <array>
+
 #ifdef _WIN32
 #include <windows.h>
 
@@ -64,8 +66,8 @@ ReadOnlyPacket::ReadOnlyPacket() : mPosition(0), mSize(0), mData(nullptr)
 }
 
 ReadOnlyPacket::ReadOnlyPacket(uint32_t position, uint32_t size,
-    uint8_t *pData, std::shared_ptr<uint8_t> dataRef) : mPosition(position),
-    mSize(size), mData(pData), mDataRef(dataRef)
+    uint8_t *pData, std::shared_ptr<PacketArray> dataRef) :
+    mPosition(position), mSize(size), mData(pData), mDataRef(dataRef)
 {
 }
 
@@ -108,8 +110,8 @@ void ReadOnlyPacket::Allocate()
     // Ensure the packet data buffer is allocated.
     if(nullptr == mData)
     {
-        mDataRef = std::shared_ptr<uint8_t>(new uint8_t[MAX_PACKET_SIZE]);
-        mData = mDataRef.get();
+        mDataRef = std::shared_ptr<PacketArray>(new PacketArray);
+        mData = mDataRef.get()->data();
     }
 }
 
