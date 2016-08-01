@@ -28,6 +28,10 @@
 
 using namespace libcomp;
 
+DatabaseQueryImpl::~DatabaseQueryImpl()
+{
+}
+
 bool DatabaseQueryImpl::Bind(size_t index, const std::unordered_map<
     std::string, std::vector<char>>& values)
 {
@@ -205,8 +209,22 @@ bool DatabaseQuery::GetMap(const String& name, std::unordered_map<
     return result;
 }
 
+bool DatabaseQuery::BatchNext()
+{
+    bool result = false;
+
+    if(nullptr != mImpl)
+    {
+        result = mImpl->BatchNext();
+    }
+
+    return result;
+}
+
 DatabaseQuery& DatabaseQuery::operator=(DatabaseQuery&& other)
 {
+    delete mImpl;
+
     mImpl = other.mImpl;
     other.mImpl = nullptr;
 

@@ -31,12 +31,18 @@ using namespace libcomp;
 
 DatabaseQueryCassandra::DatabaseQueryCassandra(DatabaseCassandra *pDatabase) :
     mDatabase(pDatabase), mPrepared(nullptr), mStatement(nullptr),
-    mFuture(nullptr), mResult(nullptr), mRowIterator(nullptr)
+    mFuture(nullptr), mResult(nullptr), mRowIterator(nullptr), mBatch(nullptr)
 {
 }
 
 DatabaseQueryCassandra::~DatabaseQueryCassandra()
 {
+    if(nullptr != mBatch)
+    {
+        cass_batch_free(mBatch);
+        mBatch = nullptr;
+    }
+
     if(nullptr != mRowIterator)
     {
         cass_iterator_free(mRowIterator);
@@ -118,6 +124,7 @@ bool DatabaseQueryCassandra::Prepare(const String& query)
 bool DatabaseQueryCassandra::Execute()
 {
     bool result = false;
+    bool isBatch = false;
 
     if(nullptr != mFuture)
     {
@@ -137,16 +144,68 @@ bool DatabaseQueryCassandra::Execute()
 
         if(nullptr != pSession)
         {
-            CassFuture *pFuture = cass_session_execute(pSession, mStatement);
+            CassFuture *pFuture;
 
-            cass_future_wait(pFuture);
-
-            if(CASS_OK != cass_future_error_code(pFuture))
+            if(nullptr != mBatch)
             {
-                result = mDatabase->WaitForFuture(pFuture);
+                isBatch = true;
+
+                if(CASS_OK == cass_batch_add_statement(mBatch, mStatement))
+                {
+                    cass_statement_free(mStatement);
+                    mStatement = nullptr;
+
+                    pFuture = cass_session_execute_batch(pSession, mBatch);
+                }
+                else
+                {
+                    pFuture = nullptr;
+                }
             }
             else
             {
+                pFuture = cass_session_execute(pSession, mStatement);
+            }
+
+            if(nullptr != pFuture)
+            {
+                cass_future_wait(pFuture);
+            }
+
+            if(nullptr == pFuture || CASS_OK != cass_future_error_code(
+                pFuture))
+            {
+                if(nullptr != pFuture)
+                {
+                    result = mDatabase->WaitForFuture(pFuture);
+                }
+                else
+                {
+                    result = false;
+                }
+            }
+            else
+            {
+                // Free the batch.
+                if(nullptr != mBatch)
+                {
+                    cass_batch_free(mBatch);
+                    mBatch = nullptr;
+                }
+
+                // Free the statement.
+                if(nullptr != mStatement)
+                {
+                    cass_statement_free(mStatement);
+                    mStatement = nullptr;
+                }
+
+                // Prepare another statement.
+                if(nullptr != mPrepared)
+                {
+                    mStatement = cass_prepared_bind(mPrepared);
+                }
+
                 // Save the result.
                 mResult = cass_future_get_result(pFuture);
 
@@ -371,6 +430,9 @@ bool DatabaseQueryCassandra::GetMap(size_t index,
                         values[key] = std::move(value);
                     }
                 }
+
+                cass_iterator_free(pMapIterator);
+                pMapIterator = nullptr;
             }
         }
     }
@@ -444,6 +506,40 @@ bool DatabaseQueryCassandra::GetMap(const String& name,
                         values[key] = std::move(value);
                     }
                 }
+
+                cass_iterator_free(pMapIterator);
+                pMapIterator = nullptr;
+            }
+        }
+    }
+
+    return result;
+}
+
+bool DatabaseQueryCassandra::BatchNext()
+{
+    bool result = false;
+
+    if(nullptr != mStatement)
+    {
+        if(nullptr == mBatch)
+        {
+            mBatch = cass_batch_new(CASS_BATCH_TYPE_LOGGED);
+        }
+
+        if(nullptr != mBatch)
+        {
+            if(CASS_OK == cass_batch_add_statement(mBatch, mStatement))
+            {
+                cass_statement_free(mStatement);
+                mStatement = nullptr;
+
+                if(nullptr != mPrepared)
+                {
+                    mStatement = cass_prepared_bind(mPrepared);
+                }
+
+                result = true;
             }
         }
     }

@@ -39,6 +39,8 @@ namespace libcomp
 class DatabaseQueryImpl
 {
 public:
+    virtual ~DatabaseQueryImpl();
+
     virtual bool Prepare(const String& query) = 0;
     virtual bool Execute() = 0;
     virtual bool Next() = 0;
@@ -54,6 +56,8 @@ public:
         std::string, std::vector<char>>& values);
     virtual bool GetMap(const String& name, std::unordered_map<
         std::string, std::vector<char>>& values);
+
+    virtual bool BatchNext() = 0;
 
     virtual bool IsValid() const = 0;
 };
@@ -81,6 +85,8 @@ public:
         std::string, std::vector<char>>& values);
     bool GetMap(const String& name, std::unordered_map<
         std::string, std::vector<char>>& values);
+
+    bool BatchNext();
 
     bool IsValid() const;
 

@@ -60,6 +60,8 @@ public:
     virtual bool GetMap(const String& name, std::unordered_map<
         std::string, std::vector<char>>& values);
 
+    virtual bool BatchNext();
+
     virtual bool IsValid() const;
 
 private:
@@ -71,6 +73,7 @@ private:
     const CassResult *mResult;
 
     CassIterator *mRowIterator;
+    CassBatch *mBatch;
 };
 
 } // namespace libcomp
