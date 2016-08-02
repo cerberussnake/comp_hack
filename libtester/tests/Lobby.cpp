@@ -49,8 +49,8 @@ TEST(Lobby, Connection)
     libcomp::LobbyConnection connection(service);
     connection.Connect("127.0.0.1", 10666);
 
-    asio::deadline_timer timer(service);
-    timer.expires_from_now(boost::posix_time::seconds(30));
+    asio::steady_timer timer(service);
+    timer.expires_from_now(std::chrono::seconds(30));
     timer.async_wait([&service](asio::error_code)
     {
         service.stop();
