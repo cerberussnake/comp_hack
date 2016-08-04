@@ -46,6 +46,12 @@ using namespace libcomp;
 /// If the module name should be stripped from the backtrace.
 #define EXCEPTION_STRIP_MODULE (0)
 
+#if __FreeBSD__
+typedef size_t  backtrace_size_t;
+#elif __linux__
+typedef int     backtrace_size_t;
+#endif
+
 /**
  * Length of the absolute path to the source directory to strip from backtrace
  * paths. Calculate the length of the path to the project so we may remove that
@@ -63,7 +69,7 @@ Exception::Exception(const String& msg, const String& f, int l) :
     void *backtraceAddresses[MAX_BACKTRACE_DEPTH];
 
     // Populate the array of backtrace addresses and get how many were added.
-    int backtraceSize = ::backtrace(backtraceAddresses, MAX_BACKTRACE_DEPTH);
+    backtrace_size_t backtraceSize = ::backtrace(backtraceAddresses, MAX_BACKTRACE_DEPTH);
 
     // If we have a valid array of backtraces, parse them.
     if(backtraceSize > 0)
@@ -78,7 +84,7 @@ Exception::Exception(const String& msg, const String& f, int l) :
             // For each symbol in the array, convert it to a String and add it
             // to the backtrace string list. Set i = 1 to skip over this
             // constructor function.
-            for(int i = 1; i < backtraceSize; i++)
+            for(backtrace_size_t i = 1; i < backtraceSize; i++)
             {
                 std::string symbol = backtraceSymbols[i];
                 std::string demangled;
