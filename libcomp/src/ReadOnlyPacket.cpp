@@ -488,7 +488,7 @@ int16_t ReadOnlyPacket::ReadS16Big()
 int16_t ReadOnlyPacket::ReadS16Little()
 {
     // Return the value converted from little endian byte order.
-    return le16toh(ReadS16());
+    return (int16_t)le16toh(ReadS16());
 }
 
 uint32_t ReadOnlyPacket::ReadU32()
@@ -550,7 +550,7 @@ int32_t ReadOnlyPacket::ReadS32Big()
 int32_t ReadOnlyPacket::ReadS32Little()
 {
     // Return the value converted from little endian byte order.
-    return le32toh(ReadS32());
+    return (int32_t)le32toh(ReadS32());
 }
 
 uint64_t ReadOnlyPacket::ReadU64()
@@ -612,7 +612,7 @@ int64_t ReadOnlyPacket::ReadS64Big()
 int64_t ReadOnlyPacket::ReadS64Little()
 {
     // Return the value converted from little endian byte order.
-    return le64toh(ReadS64());
+    return (int64_t)le64toh(ReadS64());
 }
 
 float ReadOnlyPacket::ReadFloat()
