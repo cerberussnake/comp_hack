@@ -371,6 +371,48 @@ TEST(String, Replace)
     EXPECT_EQ(s, "今日wa月曜日です。初めまして。僕waオメガです。");
 }
 
+TEST(String, ToInteger)
+{
+    bool ok;
+
+    EXPECT_EQ(0, String("0").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(0, String("+0").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(0, String("-0").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(-123, String("-123").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(-128, String("-128").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(127, String("127").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(127, String("+127").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(0, String("128").ToInteger<int8_t>(&ok));
+    EXPECT_FALSE(ok);
+
+    EXPECT_EQ(255, String("255").ToInteger<uint8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(0, String("-10").ToInteger<uint8_t>(&ok));
+    EXPECT_FALSE(ok);
+
+    EXPECT_EQ(28, String("034").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(28, String("+034").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(-28, String("-034").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(28, String("0x1c").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(28, String("+0x1c").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(28, String("0x1C").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(-28, String("-0x1c").ToInteger<int8_t>(&ok));
+    EXPECT_TRUE(ok);
+}
+
 int main(int argc, char *argv[])
 {
     try

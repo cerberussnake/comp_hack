@@ -29,10 +29,14 @@
 
 #include <stdint.h>
 
+#include <iomanip>
+#include <limits>
+#include <list>
 #include <memory>
+#include <regex>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <list>
 
 namespace libcomp
 {
@@ -398,6 +402,87 @@ public:
      * @returns The UTF-8 encoded string as an STL string object.
      */
     std::string ToUtf8() const;
+
+    /**
+     * @brief Convert the string to an integer.
+     * @param pOK If not null, this will set the variable pointed by pOK to
+     *   true if the string was converted or false if it was not.
+     * @returns 0 if the conversion failed or the value is 0 or the value of
+     *   the string represented as an integer.
+     * @note This works with hex (0x prefix) and octal (0 prefix) as well.
+     */
+    template<typename T>
+    T ToInteger(bool *pOK = nullptr) const
+    {
+        T value = 0;
+        bool ok = true;
+        int base = 10;
+        std::smatch match;
+        std::string s = ToUtf8();
+
+        if(std::regex_match(s, match, std::regex(
+            "^([+-])?0x([0-9a-fA-F]+)$")))
+        {
+            base = 16;
+            s = std::string(match[1]) + std::string(match[2]);
+        }
+        else if(std::regex_match(s, match, std::regex(
+            "^([+-])?0([0-7]+)$")))
+        {
+            base = 8;
+            s = std::string(match[1]) + std::string(match[2]);
+        }
+        else if(!std::regex_match(s, match, std::regex(
+            "^[+-]?(([1-9][0-9]*)|0)$")))
+        {
+            ok = false;
+        }
+
+        if(ok)
+        {
+            if(std::numeric_limits<T>::is_signed)
+            {
+                int64_t temp;
+
+                std::stringstream ss(s);
+                ss >> std::setbase(base) >> temp;
+
+                if(ss && temp >= std::numeric_limits<T>::min() &&
+                    temp <= std::numeric_limits<T>::max())
+                {
+                    value = temp;
+                }
+                else
+                {
+                    ok = false;
+                }
+            }
+            else
+            {
+                uint64_t temp;
+
+                std::stringstream ss(s);
+                ss >> std::setbase(base) >> temp;
+
+                if(ss && temp >= std::numeric_limits<T>::min() &&
+                    temp <= std::numeric_limits<T>::max())
+                {
+                    value = temp;
+                }
+                else
+                {
+                    ok = false;
+                }
+            }
+        }
+
+        if(nullptr != pOK)
+        {
+            *pOK = ok;
+        }
+
+        return value;
+    }
 
     /**
      * Get if argument errors will be reported. This will report the
