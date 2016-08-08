@@ -103,7 +103,13 @@ TEST(ScriptEngine, EvalPrint)
 
 TEST(ScriptEngine, ReadOnlyPacket)
 {
-    Log::GetSingletonPtr()->AddStandardOutputHook();
+    String scriptMessages;
+
+    Log::GetSingletonPtr()->AddLogHook(
+        [&scriptMessages](Log::Level_t level, const String& msg)
+        {
+            scriptMessages += msg;
+        });
 
     ScriptEngine engine;
 
@@ -112,6 +118,15 @@ TEST(ScriptEngine, ReadOnlyPacket)
         "p.WriteBlank(3);\n"
         "print(p.Size());\n"
     ));
+    EXPECT_EQ(scriptMessages, "SQUIRREL: 3\n");
+    scriptMessages.Clear();
+
+    EXPECT_TRUE(engine.Eval(
+        "p <- Packet();\n"
+        "print(p.Size());\n"
+    ));
+    EXPECT_EQ(scriptMessages, "SQUIRREL: 0\n");
+    scriptMessages.Clear();
 
     Log::GetSingletonPtr()->ClearHooks();
 }

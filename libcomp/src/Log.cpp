@@ -174,6 +174,12 @@ void Log::LogMessage(Log::Level_t level, const String& msg)
     {
         (*i.first)(level, final, i.second);
     }
+
+    // Call all lambda hooks.
+    for(auto func : mLambdaHooks)
+    {
+        func(level, final);
+    }
 }
 
 String Log::GetLogPath() const
@@ -224,6 +230,12 @@ void Log::AddLogHook(Log::Hook_t func, void *data)
     mHooks[func] = data;
 }
 
+void Log::AddLogHook(const std::function<void(Level_t level,
+    const String& msg)>& func)
+{
+    mLambdaHooks.push_back(func);
+}
+
 void Log::AddStandardOutputHook()
 {
     // Add the default hook to log all messages to the terminal.
@@ -237,6 +249,7 @@ void Log::ClearHooks()
 
     // Remove all hooks.
     mHooks.clear();
+    mLambdaHooks.clear();
 }
 
 bool Log::GetLogLevelEnabled(Level_t level) const

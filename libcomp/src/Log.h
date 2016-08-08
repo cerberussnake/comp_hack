@@ -29,8 +29,10 @@
 
 #include "String.h"
 
+#include <list>
 #include <mutex>
 #include <fstream>
+#include <functional>
 #include <unordered_map>
 
 namespace libcomp
@@ -86,7 +88,7 @@ public:
      * data passed to @ref Log::AddLogHook along with the function. See
      * @ref Level_t for all possible log levels.
      */
-    typedef void (*Hook_t)(Level_t level, const String& msg, void *data);
+    typedef void (*Hook_t)(Level_t level, const String& msg, void *pUserData);
 
     /**
      * Deconstruct and delete the Log singleton.
@@ -129,6 +131,16 @@ public:
      * @param pUserData User defined data to pass to the log hook function.
      */
     void AddLogHook(Hook_t func, void *pUserData = 0);
+
+    /**
+     * Add a log hook to the logging subsystem. The log hook @em func will be
+     * called for each new log message that is enabled through
+     * @ref SetLogLevelEnabled. The log level and message will be provided to
+     * the log hook function.
+     * @param func Log hook function to call.
+     */
+    void AddLogHook(const std::function<void(Level_t level,
+        const String& msg)>& func);
 
     /**
      * Add the built-in hook to log to standard output.
@@ -188,6 +200,13 @@ protected:
      * Mapping of log hooks and their associated user data.
      */
     std::unordered_map<Hook_t, void*> mHooks;
+
+    /**
+     * @internal
+     * List of log hooks.
+     */
+    std::list<std::function<void(Level_t level,
+        const String& msg)>> mLambdaHooks;
 
     /**
      * @internal
