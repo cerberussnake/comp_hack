@@ -211,7 +211,7 @@ ExternalProject_Add(
     LOG_BUILD ON
     LOG_INSTALL ON
 
-    #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libtinyxml2.a
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libtinyxml2.a
 )
 
 ExternalProject_Get_Property(tinyxml2-ex INSTALL_DIR)
@@ -237,8 +237,9 @@ ExternalProject_Add(
     LOG_BUILD ON
     LOG_INSTALL ON
 
-    #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libgtest.a <INSTALL_DIR>/lib/libgmock.a
-        <INSTALL_DIR>/lib/libgmock_main.a
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libgtest.a
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libgmock.a
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libgmock_main.a
 )
 
 ExternalProject_Get_Property(googletest INSTALL_DIR)
