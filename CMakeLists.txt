@@ -40,6 +40,8 @@ MESSAGE("-- CMake version: ${CMAKE_VERSION}")
 # Include our custom cmake modules.
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
+INCLUDE(${CMAKE_MODULE_PATH}/DetermineOS.cmake)
+
 # Include all build code for external projects.
 INCLUDE(${CMAKE_MODULE_PATH}/external.cmake)
 
@@ -48,6 +50,13 @@ FIND_PACKAGE(SQLite3 REQUIRED)
 
 IF(NOT SQLITE3_FOUND)
     MESSAGE(FATAL_ERROR "You must have SQLite3 installed.")
+ENDIF()
+
+# libuv is needed.
+FIND_PACKAGE(LibUV REQUIRED)
+
+IF(NOT LIBUV_FOUND)
+    MESSAGE(FATAL_ERROR "You must have libuv installed.")
 ENDIF()
 
 # Enable testing.
