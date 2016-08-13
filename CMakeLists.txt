@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 
 # http://stackoverflow.com/questions/14933172/
 IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")

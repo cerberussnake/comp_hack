@@ -32,6 +32,8 @@ ExternalProject_Add(
     LOG_CONFIGURE ON
     LOG_BUILD ON
     LOG_INSTALL ON
+
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libcassandra_static.a
 )
 
 ExternalProject_Get_Property(cassandra-cpp INSTALL_DIR)
@@ -57,6 +59,10 @@ ExternalProject_Add(
     LOG_CONFIGURE ON
     LOG_BUILD ON
     LOG_INSTALL ON
+
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libttvfs.a
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libttvfs_cfileapi.a
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libttvfs_zip.a
 )
 
 ExternalProject_Get_Property(ttvfs-ex INSTALL_DIR)
@@ -115,8 +121,8 @@ ExternalProject_Add(
     LOG_BUILD ON
     LOG_INSTALL ON
 
-    #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libcivetweb.a
-    #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libcxx-library.a
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libcivetweb.a
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libcxx-library.a
 )
 
 ExternalProject_Get_Property(civet INSTALL_DIR)
@@ -148,8 +154,8 @@ ExternalProject_Add(
     LOG_BUILD ON
     LOG_INSTALL ON
 
-    #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libsquirrel.a
-    #BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libsqstdlib.a
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libsquirrel.a
+    BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libsqstdlib.a
 )
 
 ExternalProject_Get_Property(squirrel3 INSTALL_DIR)
