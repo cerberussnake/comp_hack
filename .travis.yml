@@ -17,8 +17,8 @@ addons:
       name: "comphack/comp_hack"
       description: "Build submitted via Travis CI"
     notification_email: compomega@tutanota.com
-    build_command_prepend: "mkdir build && cd build && cmake .."
-    build_command: "make"
+    build_command_prepend: "mkdir build && cd build && cmake -G ${GENERATOR} .."
+    build_command: "cmake --build ."
     branch_pattern: coverity_scan
 
 matrix:
@@ -27,11 +27,24 @@ matrix:
       env:
         - COMPILER_CC=clang
         - COMPILER_CXX=clang++
+        - CMAKE_GENERATOR=Unix Makefiles
+    - compiler: clang
+      env:
+        - COMPILER_CC=clang
+        - COMPILER_CXX=clang++
+        - CMAKE_GENERATOR=Ninja
 
 before_install:
   - sudo apt-get update -q
-  - sudo apt-get install libssl-dev doxygen libsqlite3-dev sqlite3 libuv-dev -y
+  - sudo apt-get install libssl-dev doxygen libsqlite3-dev sqlite3 libuv-dev unzip -y
   - export cwd="`pwd`"
+  - sudo mkdir -p /opt/ninja/bin
+  - cd /opt/ninja/bin
+  - sudo wget https://github.com/ninja-build/ninja/releases/download/v1.7.1/ninja-linux.zip
+  - sudo unzip ninja-linux.zip
+  - sudo chmod +x ninja
+  - sudo rm ninja-linux.zip
+  - export PATH="/opt/ninja/bin:${PATH}"
   - cd /opt
   - sudo wget -q https://cmake.org/files/v3.6/cmake-3.6.1-Linux-x86_64.tar.gz
   - sudo tar xf cmake-3.6.1-Linux-x86_64.tar.gz
@@ -49,6 +62,7 @@ before_install:
   - if [ "$CXX" == "clang++" ]; then cd "$cwd"; fi
   - export CC="${COMPILER_CC}"
   - export CXX="${COMPILER_CXX}"
+  - export GENERATOR="${CMAKE_GENERATOR}"
 
 script:
   - jdk_switcher use oraclejdk8
