@@ -40,6 +40,8 @@ MESSAGE("-- CMake version: ${CMAKE_VERSION}")
 # Include our custom cmake modules.
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
+INCLUDE(${CMAKE_MODULE_PATH}/DetermineOS.cmake)
+
 # Include all build code for external projects.
 INCLUDE(${CMAKE_MODULE_PATH}/external.cmake)
 
