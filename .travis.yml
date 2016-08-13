@@ -27,7 +27,7 @@ matrix:
       env:
         - COMPILER_CC=clang
         - COMPILER_CXX=clang++
-        - CMAKE_GENERATOR=Unix Makefiles
+        - CMAKE_GENERATOR='Unix Makefiles'
     - compiler: clang
       env:
         - COMPILER_CC=clang
@@ -42,7 +42,7 @@ before_install:
   - cd /opt/ninja/bin
   - sudo wget https://github.com/ninja-build/ninja/releases/download/v1.7.1/ninja-linux.zip
   - sudo unzip ninja-linux.zip
-  - sudo chmod +x ninja
+  - sudo chmod 755 ninja
   - sudo rm ninja-linux.zip
   - export PATH="/opt/ninja/bin:${PATH}"
   - cd /opt
