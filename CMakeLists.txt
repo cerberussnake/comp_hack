@@ -50,6 +50,13 @@ IF(NOT SQLITE3_FOUND)
     MESSAGE(FATAL_ERROR "You must have SQLite3 installed.")
 ENDIF()
 
+# libuv is needed.
+FIND_PACKAGE(LibUV REQUIRED)
+
+IF(NOT LIBUV_FOUND)
+    MESSAGE(FATAL_ERROR "You must have libuv installed.")
+ENDIF()
+
 # Enable testing.
 INCLUDE(CTest)
 
