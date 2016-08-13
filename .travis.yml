@@ -17,7 +17,7 @@ addons:
       name: "comphack/comp_hack"
       description: "Build submitted via Travis CI"
     notification_email: compomega@tutanota.com
-    build_command_prepend: "mkdir build && cd build && cmake -G '${GENERATOR' .."
+    build_command_prepend: "mkdir build && cd build && cmake -G \"${GENERATOR\" .."
     build_command: "cmake --build ."
     branch_pattern: coverity_scan
 
@@ -81,4 +81,4 @@ script:
   - sleep 10
   - nodetool status
   - cqlsh -e "SHOW HOST; SHOW VERSION;"
-  - mkdir -p build && cd build && cmake -G '${GENERATOR}' .. && cmake --build . && cmake --build . --target Experimental
+  - mkdir -p build && cd build && cmake -G "${GENERATOR}" .. && cmake --build . && cmake --build . --target Experimental
